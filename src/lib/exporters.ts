@@ -147,3 +147,53 @@ export async function exportPng(nodes: Node[], filename: string, scale = 2) {
 export async function exportSvg(nodes: Node[], filename: string) {
   downloadDataUrl(filename, await captureCanvas(nodes, 1, 'svg'));
 }
+
+// ---------------------------------------------------------------- estáticos
+
+/** Lee el tamaño del SVG de mermaid: puede venir en width/height o en viewBox. */
+function svgSize(svg: string): { width: number; height: number } {
+  const doc = new DOMParser().parseFromString(svg, 'image/svg+xml');
+  const root = doc.documentElement;
+  const viewBox = root.getAttribute('viewBox')?.split(/[\s,]+/).map(Number);
+  if (viewBox?.length === 4 && viewBox.every(Number.isFinite)) {
+    return { width: viewBox[2], height: viewBox[3] };
+  }
+  const width = Number.parseFloat(root.getAttribute('width') ?? '');
+  const height = Number.parseFloat(root.getAttribute('height') ?? '');
+  return {
+    width: Number.isFinite(width) ? width : 1200,
+    height: Number.isFinite(height) ? height : 800,
+  };
+}
+
+/**
+ * Los diagramas sin soporte interactivo (sequence, gantt, pie...) ya son un
+ * SVG: no pasan por React Flow ni por html-to-image.
+ */
+export function exportStaticSvg(svg: string, filename: string) {
+  download(filename, svg, 'image/svg+xml');
+}
+
+export async function exportStaticPng(svg: string, filename: string, scale = 2) {
+  const { width, height } = svgSize(svg);
+  const background = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
+
+  // data URL en base64 y no un blob: un blob: URL marca el canvas como
+  // contaminado en algunos navegadores y toDataURL falla.
+  const encoded = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+  const image = new Image();
+  image.src = encoded;
+  await image.decode();
+
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.ceil(width * scale);
+  canvas.height = Math.ceil(height * scale);
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('No se pudo crear el lienzo de exportación');
+
+  context.fillStyle = background || '#ffffff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+  downloadDataUrl(filename, canvas.toDataURL('image/png'));
+}

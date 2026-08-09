@@ -122,6 +122,25 @@
   align-items: center;
   justify-content: center;
   padding: 32px;
+  background: var(--canvas-bg);
+  /* puntos equivalentes a los del canvas interactivo (GRID_SIZE = 10) */
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-size: 10px 10px;
+}
+
+/* misma grilla de líneas que el canvas cuando se activa el botón Grilla */
+.static-view.is-grid {
+  background-image:
+    linear-gradient(var(--grid-line-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-strong) 1px, transparent 1px),
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+}
+
+.static-view__svg {
+  /* el fondo del diagrama no debe tapar la grilla */
+  background: transparent;
 }
 
 .static-view svg {
