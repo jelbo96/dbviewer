@@ -117,11 +117,10 @@
 .static-view {
   position: absolute;
   inset: 0;
-  overflow: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 32px;
+  /* hidden y no auto: el desplazamiento lo lleva el transform, no el scroll */
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
   background: var(--canvas-bg);
   /* puntos equivalentes a los del canvas interactivo (GRID_SIZE = 10) */
   background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
@@ -138,14 +137,22 @@
   background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
 }
 
+.static-view.is-panning {
+  cursor: grabbing;
+}
+
 .static-view__svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
   /* el fondo del diagrama no debe tapar la grilla */
   background: transparent;
 }
 
 .static-view svg {
-  max-width: 100%;
-  height: auto;
+  display: block;
+  /* sin max-width: el tamaño lo fija el zoom, no el contenedor */
 }
 
 .static-view__badge {
@@ -170,5 +177,52 @@
   justify-content: center;
   color: var(--text-faint);
   font-size: 13px;
+  pointer-events: none;
+}
+
+.static-view__controls {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.static-view__controls button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.static-view__controls button:last-child {
+  border-bottom: none;
+}
+
+.static-view__controls button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.static-view__zoom {
+  position: absolute;
+  bottom: 16px;
+  left: 52px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-faint);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
   pointer-events: none;
 }
