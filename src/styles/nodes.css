@@ -1,0 +1,299 @@
+/* Nodos del canvas. Las alturas aquí deben coincidir con lib/measure.ts. */
+
+.node {
+  /* la tipografía del diagrama es configurable desde la toolbar */
+  font-family: var(--font-diagram, var(--font-ui));
+  font-size: 13px;
+  color: var(--text);
+  background: var(--node-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.node.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow);
+}
+
+.node.is-dimmed {
+  opacity: 0.35;
+}
+
+/* --- header común --- */
+
+.node__header {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: var(--node-header);
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.node__header-accent {
+  width: 3px;
+  align-self: stretch;
+  margin: 6px 4px 6px -6px;
+  border-radius: 2px;
+  background: var(--accent);
+  flex: none;
+}
+
+.node__schema {
+  color: var(--text-faint);
+  font-weight: 500;
+}
+
+.node__badge {
+  margin-left: auto;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
+/* --- filas (tabla / entidad) --- */
+
+.node__rows {
+  padding: 3px 0;
+}
+
+.node__row {
+  position: relative;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font-size: 12.5px;
+  line-height: 1;
+}
+
+.node__row:hover {
+  background: var(--bg-hover);
+}
+
+.node__row.is-linked {
+  background: var(--accent-soft);
+}
+
+.node__col-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.node__col-name.is-pk {
+  font-weight: 650;
+}
+
+.node__col-type {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.node__col-type.is-enum {
+  color: var(--enum-accent);
+}
+
+.node__key {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 1.5px 4px;
+  border-radius: 3px;
+  flex: none;
+}
+
+.node__key--pk {
+  color: var(--pk);
+  background: color-mix(in srgb, var(--pk) 16%, transparent);
+}
+
+.node__key--fk {
+  color: var(--fk);
+  background: color-mix(in srgb, var(--fk) 16%, transparent);
+}
+
+.node__key--uk,
+.node__key--nn {
+  color: var(--text-faint);
+  background: color-mix(in srgb, var(--text-faint) 14%, transparent);
+}
+
+.node__note {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--text-faint);
+  border-top: 1px dashed var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- enum --- */
+
+.node--enum {
+  border-color: color-mix(in srgb, var(--enum-accent) 45%, var(--border-strong));
+}
+
+.node--enum .node__header {
+  background: color-mix(in srgb, var(--enum-accent) 14%, var(--node-header));
+}
+
+.node--enum .node__header-accent {
+  background: var(--enum-accent);
+}
+
+.node--enum .node__row {
+  height: 22px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-dim);
+}
+
+/* --- clase (UML) --- */
+
+.node__section {
+  padding: 4px 0;
+  border-top: 1px solid var(--border);
+}
+
+.node__section:first-child {
+  border-top: none;
+}
+
+.node__member {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node__annotation {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-style: italic;
+  color: var(--enum-accent);
+}
+
+/* --- formas de flowchart --- */
+
+.shape-node {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.shape-node__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.shape-node__shape {
+  fill: var(--shape-fill, var(--node-bg));
+  stroke: var(--shape-stroke, var(--border-strong));
+  stroke-width: var(--shape-stroke-width, 1.5);
+  stroke-dasharray: var(--shape-dash, none);
+  transition: stroke 0.12s ease;
+}
+
+.shape-node.is-selected .shape-node__shape {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.shape-node__label {
+  font-family: var(--font-diagram, var(--font-ui));
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 6px 10px;
+  font-size: 13px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  pointer-events: none;
+  color: var(--shape-text, var(--text));
+}
+
+.shape-node.is-dimmed {
+  opacity: 0.35;
+}
+
+/* --- grupo / subgraph --- */
+
+.group-node {
+  width: 100%;
+  height: 100%;
+  border: 1.5px dashed var(--group-stroke);
+  border-radius: var(--radius-lg);
+  background: var(--group-fill);
+  position: relative;
+}
+
+.group-node__label {
+  font-family: var(--font-diagram, var(--font-ui));
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  padding: 1px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--canvas-bg);
+  border-radius: 99px;
+}
+
+/* --- handles --- */
+
+.rf-handle {
+  width: 8px;
+  height: 8px;
+  border: none;
+  background: transparent;
+  opacity: 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* React Flow pone los handles con position absolute; sólo neutralizamos estilo */
+.react-flow__handle {
+  border-radius: 50%;
+}
