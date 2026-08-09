@@ -1,0 +1,155 @@
+.canvas {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  background: var(--canvas-bg);
+}
+
+.react-flow__background {
+  background: var(--canvas-bg);
+}
+
+.react-flow__attribution {
+  display: none;
+}
+
+/* --- aristas --- */
+
+.rel-edge {
+  stroke: var(--edge);
+  stroke-width: 1.6;
+  fill: none;
+  transition: stroke 0.12s ease, opacity 0.12s ease;
+}
+
+.rel-edge--dashed {
+  stroke-dasharray: 5 4;
+}
+
+.rel-edge--thick {
+  stroke-width: 3.2;
+}
+
+.rel-edge.is-active {
+  stroke: var(--edge-active);
+  stroke-width: 2.4;
+}
+
+.rel-edge.is-dimmed {
+  opacity: 0.18;
+}
+
+.react-flow__edge.selected .rel-edge {
+  stroke: var(--edge-active);
+}
+
+.rel-edge__label {
+  position: absolute;
+  pointer-events: none;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--canvas-bg);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rel-edge__label.is-active {
+  color: var(--text);
+  border-color: var(--edge-active);
+}
+
+.rel-edge__label.is-dimmed {
+  opacity: 0.2;
+}
+
+/* --- controles nativos de React Flow --- */
+
+.react-flow__controls {
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.react-flow__controls-button {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+  width: 28px;
+  height: 28px;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor;
+  max-width: 12px;
+  max-height: 12px;
+}
+
+.react-flow__minimap {
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.react-flow__minimap-mask {
+  fill: color-mix(in srgb, var(--bg) 60%, transparent);
+}
+
+/* Los grupos van detrás y no capturan clics de los nodos que contienen. */
+.react-flow__node-group {
+  z-index: -1 !important;
+}
+
+/* --- vista estática (mermaid nativo) --- */
+
+.static-view {
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.static-view svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.static-view__badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.canvas__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+  font-size: 13px;
+  pointer-events: none;
+}
