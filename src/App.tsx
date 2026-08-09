@@ -9,6 +9,8 @@ import { Tabs } from './components/Tabs';
 import { CodePane } from './components/CodePane';
 import { DiagnosticsBar } from './components/DiagnosticsBar';
 import { DiagramCanvas } from './components/DiagramCanvas';
+import { DiagramSheet } from './components/DiagramSheet';
+import { useMediaQuery, MOBILE_QUERY } from './hooks/useMediaQuery';
 
 import './styles/theme.css';
 import './styles/app.css';
@@ -60,6 +62,7 @@ export default function App() {
   const fontKey = useStore((state) => state.fontKey);
   const editorRatio = useStore((state) => state.editorRatio);
   const setEditorRatio = useStore((state) => state.setEditorRatio);
+  const isMobile = useMediaQuery(MOBILE_QUERY);
 
   useDiagramParser();
 
@@ -78,6 +81,28 @@ export default function App() {
     },
     [setEditorRatio],
   );
+
+  // En móvil no caben dos columnas: el editor ocupa la pantalla y el diagrama
+  // vive en un panel que sube desde abajo.
+  if (isMobile) {
+    return (
+      <ReactFlowProvider>
+        <div className="app app--mobile">
+          <Toolbar />
+          <Tabs />
+          <div className="app__body">
+            <aside className="app__editor">
+              <CodePane />
+              <DiagnosticsBar />
+            </aside>
+          </div>
+          <DiagramSheet>
+            <DiagramCanvas />
+          </DiagramSheet>
+        </div>
+      </ReactFlowProvider>
+    );
+  }
 
   return (
     <ReactFlowProvider>

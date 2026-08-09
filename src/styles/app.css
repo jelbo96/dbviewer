@@ -458,3 +458,97 @@
 .about__link:hover {
   text-decoration: underline;
 }
+
+/* --- móvil: el diagrama en un panel que sube desde abajo --- */
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-strong);
+  border-radius: 14px 14px 0 0;
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+}
+
+.sheet__handle {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 0 6px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.sheet__handle:active {
+  cursor: grabbing;
+}
+
+.sheet__grip {
+  width: 38px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--border-strong);
+}
+
+.sheet__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.sheet__body {
+  position: relative;
+  /* flex para que el .canvas (que es flex:1) tome alto; si no queda en 0 */
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.app--mobile .app__body {
+  /* el panel tapa la parte baja; el editor no debe quedar debajo */
+  padding-bottom: 76px;
+}
+
+.app--mobile .app__editor {
+  width: 100%;
+  border-right: none;
+}
+
+@media (max-width: 860px) {
+  .toolbar {
+    height: 42px;
+    gap: 4px;
+    padding: 0 8px;
+  }
+
+  .toolbar__brand strong,
+  .toolbar__spacer {
+    display: none;
+  }
+
+  .tb-btn,
+  .tb-select {
+    height: 26px;
+    font-size: 12px;
+  }
+
+  .tab {
+    max-width: 150px;
+  }
+
+  /* el minimapa se come media pantalla en móvil */
+  .react-flow__minimap {
+    display: none;
+  }
+}
