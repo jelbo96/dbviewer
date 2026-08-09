@@ -14,6 +14,9 @@ const DEBOUNCE_MS = 260;
  */
 export function useDiagramParser() {
   const lang = useStore(selectLang);
+  // Cambiar de pestaña debe reparsear aunque el texto coincida: al activarla se
+  // limpia el SVG estático, y sin esto no se regeneraba nunca.
+  const activeId = useStore((state) => state.activeId);
   const code = useStore(selectCode);
   const theme = useStore((state) => state.theme);
   // cambiar de tipografía cambia el ancho de las cajas: hay que remedir
@@ -63,5 +66,5 @@ export function useDiagramParser() {
     }, DEBOUNCE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [code, lang, theme, fontKey, setParseResult, setParsing, setStaticSvg]);
+  }, [code, lang, activeId, theme, fontKey, setParseResult, setParsing, setStaticSvg]);
 }
