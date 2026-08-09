@@ -117,3 +117,22 @@ export function mergePositions(model: DiagramModel, saved: PositionMap, directio
 
   return result;
 }
+
+/**
+ * Redondea posiciones al paso de la grilla.
+ *
+ * Sin esto, con la grilla activa las cajas quedaban entre líneas: el snap sólo
+ * actúa al arrastrar, pero dagre no conoce la grilla y deja el acomodo inicial
+ * en coordenadas arbitrarias.
+ */
+export function snapPositions(positions: PositionMap, grid: number): PositionMap {
+  if (grid <= 0) return positions;
+  const snapped: PositionMap = {};
+  for (const [id, point] of Object.entries(positions)) {
+    snapped[id] = {
+      x: Math.round(point.x / grid) * grid,
+      y: Math.round(point.y / grid) * grid,
+    };
+  }
+  return snapped;
+}

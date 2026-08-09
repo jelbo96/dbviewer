@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { autoLayout, mergePositions } from './layout';
+import { autoLayout, mergePositions, snapPositions } from './layout';
 import type { DiagramModel } from './types';
 
 const model: DiagramModel = {
@@ -53,5 +53,23 @@ describe('mergePositions', () => {
     });
 
     expect(merged).not.toHaveProperty('fantasma');
+  });
+});
+
+describe('snapPositions', () => {
+  it('alinea al múltiplo más cercano', () => {
+    const snapped = snapPositions({ a: { x: 444, y: 41 }, b: { x: -13, y: 0 } }, 10);
+
+    expect(snapped.a).toEqual({ x: 440, y: 40 });
+    expect(snapped.b).toEqual({ x: -10, y: 0 });
+  });
+
+  it('deja intactas las que ya están en la grilla', () => {
+    expect(snapPositions({ a: { x: 40, y: 120 } }, 10)).toEqual({ a: { x: 40, y: 120 } });
+  });
+
+  it('no hace nada con un paso inválido', () => {
+    const positions = { a: { x: 3, y: 7 } };
+    expect(snapPositions(positions, 0)).toBe(positions);
   });
 });
