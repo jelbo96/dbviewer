@@ -92,6 +92,24 @@ fuente nueva es escribir un parser, no tocar el render.
 
 ```bash
 npm run dev      # servidor de desarrollo
+npm test         # pruebas (vitest run)
+npm run lint     # oxlint
 npm run build    # typecheck + build de producción
 npm run preview  # sirve el build
 ```
+
+## Despliegue (Cloudflare Pages)
+
+| Ajuste | Valor |
+|---|---|
+| Build command | `npm run build` |
+| Output directory | `dist` |
+| Variables de entorno | ninguna |
+
+La versión de Node va fijada en `.nvmrc`. Es obligatorio: Cloudflare Pages usa
+Node 18 por defecto y ahí el build falla con `'node:util' does not provide an
+export named 'styleText'`. Si la plataforma ignorara el `.nvmrc`, el equivalente
+es la variable `NODE_VERSION`.
+
+El sitio es estático y sin backend. Una sola ruta, así que no hace falta
+`_redirects` para SPA.
