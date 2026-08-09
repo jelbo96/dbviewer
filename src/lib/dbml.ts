@@ -136,20 +136,30 @@ function formatDefault(field: RawField): string | undefined {
  * Los errores del compilador DBML vienen como `{ diags: [...] }` con
  * posiciones 1-indexadas; a veces llegan como Error normal.
  */
+interface CompilerPosition {
+  line?: number;
+  column?: number;
+}
+
+interface CompilerDiagnostic {
+  message?: string;
+  location?: { start?: CompilerPosition; end?: CompilerPosition };
+}
+
 function toDiagnostics(error: unknown): Diagnostic[] {
-  const anyErr = error as { diags?: unknown; message?: string };
-  const diags = anyErr?.diags;
+  const raw = error as { diags?: unknown; message?: string };
+  const diags = raw?.diags;
   if (Array.isArray(diags)) {
-    return diags.map((d: any) => ({
-      message: String(d.message ?? 'Error de sintaxis'),
+    return (diags as CompilerDiagnostic[]).map((diagnostic) => ({
+      message: String(diagnostic.message ?? 'Error de sintaxis'),
       severity: 'error' as const,
-      line: d.location?.start?.line,
-      column: d.location?.start?.column,
-      endLine: d.location?.end?.line,
-      endColumn: d.location?.end?.column,
+      line: diagnostic.location?.start?.line,
+      column: diagnostic.location?.start?.column,
+      endLine: diagnostic.location?.end?.line,
+      endColumn: diagnostic.location?.end?.column,
     }));
   }
-  return [{ message: anyErr?.message ?? String(error), severity: 'error' }];
+  return [{ message: raw?.message ?? String(error), severity: 'error' }];
 }
 
 /**

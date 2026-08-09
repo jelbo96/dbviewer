@@ -11,6 +11,15 @@ import type {
   ShapeName,
 } from './types';
 import { TABLE, clamp, shapeSize, textWidth } from './measure';
+import type {
+  ClassDb,
+  ClassMember,
+  ErDb,
+  FlowDb,
+  MermaidDiagram,
+  MermaidInternalApi,
+  StateDb,
+} from './mermaidAst';
 
 let initialized = false;
 
@@ -32,11 +41,11 @@ function ensureInit() {
  * subgrafos) y podemos hacer nuestro propio layout con cajas arrastrables.
  * Los tipos de diagrama que no sabemos convertir caen a render estático.
  */
-async function getDiagram(source: string): Promise<any> {
+async function getDiagram(source: string): Promise<MermaidDiagram> {
   ensureInit();
   // `getDiagramFromText` está marcado como interno pero es la única vía
   // soportada para leer el AST; si desaparece, el catch nos deja en estático.
-  return (mermaid as any).mermaidAPI.getDiagramFromText(source);
+  return (mermaid as unknown as MermaidInternalApi).mermaidAPI.getDiagramFromText(source);
 }
 
 const DIRECTIONS = new Set(['LR', 'RL', 'TB', 'BT']);
@@ -138,10 +147,10 @@ function cleanLabel(text: unknown, fallback = ''): string {
 
 // ---------------------------------------------------------------- flowchart
 
-function buildFlowchart(db: any): DiagramModel {
-  const vertices: Map<string, any> = db.getVertices();
-  const rawEdges: any[] = db.getEdges();
-  const subGraphs: any[] = db.getSubGraphs?.() ?? [];
+function buildFlowchart(db: FlowDb): DiagramModel {
+  const vertices = db.getVertices();
+  const rawEdges = db.getEdges();
+  const subGraphs = db.getSubGraphs?.() ?? [];
 
   const nodes: DiagramNode[] = [];
   const parentOf = new Map<string, string>();
@@ -208,13 +217,13 @@ const ER_MARKERS: Record<string, EndpointMarker> = {
   MD_PARENT: 'md-parent',
 };
 
-function buildEr(db: any): DiagramModel {
-  const entities: Map<string, any> = db.getEntities();
-  const relationships: any[] = db.getRelationships();
+function buildEr(db: ErDb): DiagramModel {
+  const entities = db.getEntities();
+  const relationships = db.getRelationships();
 
   const nodes: DiagramNode[] = [];
   for (const [name, entity] of entities) {
-    const attributes = (entity.attributes ?? []).map((attr: any) => ({
+    const attributes = (entity.attributes ?? []).map((attr) => ({
       type: String(attr.type ?? ''),
       name: String(attr.name ?? ''),
       keys: (attr.keys ?? []) as string[],
@@ -243,8 +252,8 @@ function buildEr(db: any): DiagramModel {
     target: rel.entityB,
     label: cleanLabel(rel.roleA) || undefined,
     // mermaid dibuja cardB al inicio y cardA al final (ver erRenderer)
-    startMarker: ER_MARKERS[rel.relSpec?.cardB] ?? 'none',
-    endMarker: ER_MARKERS[rel.relSpec?.cardA] ?? 'none',
+    startMarker: ER_MARKERS[rel.relSpec?.cardB ?? ''] ?? 'none',
+    endMarker: ER_MARKERS[rel.relSpec?.cardA ?? ''] ?? 'none',
     variant: rel.relSpec?.relType === 'IDENTIFYING' ? 'solid' : 'dashed',
   }));
 
@@ -261,7 +270,7 @@ const CLASS_RELATION_MARKERS: Record<number, EndpointMarker> = {
   4: 'lollipop',
 };
 
-function memberText(member: any): string {
+function memberText(member: ClassMember | string): string {
   if (typeof member === 'string') return member;
   if (typeof member?.getDisplayDetails === 'function') {
     return String(member.getDisplayDetails().displayText ?? '');
@@ -269,16 +278,16 @@ function memberText(member: any): string {
   return String(member?.text ?? '');
 }
 
-function buildClass(db: any): DiagramModel {
-  const classes: Map<string, any> = db.getClasses();
-  const relations: any[] = db.getRelations();
+function buildClass(db: ClassDb): DiagramModel {
+  const classes = db.getClasses();
+  const relations = db.getRelations();
 
   const nodes: DiagramNode[] = [];
   for (const [key, node] of classes) {
     const id = String(node.id ?? key);
     const members = (node.members ?? []).map(memberText).filter(Boolean);
     const methods = (node.methods ?? []).map(memberText).filter(Boolean);
-    const annotations = (node.annotations ?? []).map((a: any) => `«${a}»`);
+    const annotations = (node.annotations ?? []).map((a) => `«${a}»`);
     const label = cleanLabel(node.label, id);
 
     let widest = textWidth(label, 14, true) + 32;
@@ -304,7 +313,7 @@ function buildClass(db: any): DiagramModel {
     });
   }
 
-  const namespaces: Map<string, any> = db.getNamespaces?.() ?? new Map();
+  const namespaces = db.getNamespaces?.() ?? new Map();
   for (const [id, ns] of namespaces) {
     nodes.push({
       id: `ns:${id}`,
@@ -321,8 +330,8 @@ function buildClass(db: any): DiagramModel {
     target: rel.id2,
     label: cleanLabel(rel.title) || undefined,
     variant: rel.relation?.lineType === 1 ? 'dashed' : 'solid',
-    startMarker: CLASS_RELATION_MARKERS[rel.relation?.type1] ?? 'none',
-    endMarker: CLASS_RELATION_MARKERS[rel.relation?.type2] ?? 'none',
+    startMarker: CLASS_RELATION_MARKERS[rel.relation?.type1 ?? -1] ?? 'none',
+    endMarker: CLASS_RELATION_MARKERS[rel.relation?.type2 ?? -1] ?? 'none',
   }));
 
   return { nodes, edges, direction: toDirection(db.getDirection?.(), 'TB'), diagramType: 'classDiagram' };
@@ -330,7 +339,7 @@ function buildClass(db: any): DiagramModel {
 
 // ------------------------------------------------------------- state
 
-function buildState(db: any): DiagramModel {
+function buildState(db: StateDb): DiagramModel {
   // `getData()` devuelve el grafo ya aplanado que usa el renderer unificado.
   const data = db.getData();
   const nodes: DiagramNode[] = [];
@@ -365,7 +374,7 @@ function buildState(db: any): DiagramModel {
     });
   }
 
-  const edges: DiagramEdge[] = (data.edges ?? []).map((edge: any, index: number) => ({
+  const edges: DiagramEdge[] = (data.edges ?? []).map((edge, index) => ({
     id: edge.id ?? `st${index}`,
     source: edge.start,
     target: edge.end,
@@ -380,7 +389,7 @@ function buildState(db: any): DiagramModel {
 
 // ------------------------------------------------------------------ api
 
-const BUILDERS: Record<string, (db: any) => DiagramModel> = {
+const BUILDERS: Record<string, (db: never) => DiagramModel> = {
   flowchart: buildFlowchart,
   'flowchart-v2': buildFlowchart,
   graph: buildFlowchart,
@@ -412,7 +421,7 @@ export async function parseMermaid(source: string): Promise<ParseResult> {
     return { model: { nodes: [], edges: [], direction: 'TB', diagramType: 'mermaid' }, diagnostics: [] };
   }
 
-  let diagram: any;
+  let diagram: MermaidDiagram;
   try {
     diagram = await getDiagram(source);
   } catch (error) {
@@ -430,7 +439,7 @@ export async function parseMermaid(source: string): Promise<ParseResult> {
   }
 
   try {
-    const model = builder(diagram.db);
+    const model = builder(diagram.db as never);
     if (!model.nodes.length) {
       return { model: { ...model, fallbackToStatic: true }, diagnostics: [] };
     }
