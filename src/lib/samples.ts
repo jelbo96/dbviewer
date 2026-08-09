@@ -99,7 +99,7 @@ TableGroup contenido {
   end
 
   D --> F
-  F -.reintento.-> E
+  F -. reintento .-> E
   D ==> G[/Reporte/]
   G --> H([Fin])
 `,
