@@ -1,0 +1,8 @@
+# https://www.robotstxt.org/robotstxt.html
+# Si cambias de dominio, actualiza también la URL del sitemap y la canonical
+# de index.html.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://dbviewer.pages.dev/sitemap.xml

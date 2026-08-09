@@ -1,0 +1,17 @@
+{
+  "name": "dbviewer · DBML + Mermaid",
+  "short_name": "dbviewer",
+  "description": "Visor y editor de diagramas DBML y Mermaid con cajas arrastrables.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
