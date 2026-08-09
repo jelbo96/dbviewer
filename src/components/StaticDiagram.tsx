@@ -6,7 +6,16 @@ const MAX_ZOOM = 4;
 const FIT_PADDING = 0.9;
 /** El encuadre puede ampliar: es SVG, no pixela. */
 const FIT_MAX_ZOOM = 2;
+/** Paso de los botones + / −. La rueda usa su propio delta, no este valor. */
 const ZOOM_STEP = 1.2;
+/**
+ * Sensibilidad del pinch. Calibrada para que un gesto normal (~240px de delta
+ * acumulado) cambie el zoom a la mitad o al doble; con 0.01 un solo gesto
+ * saltaba de 200% a 18%.
+ */
+const PINCH_SENSITIVITY = 0.0025;
+/** deltaMode 1 = líneas, 2 = páginas. Los normalizamos a píxeles. */
+const LINE_HEIGHT = 16;
 
 interface View {
   x: number;
@@ -91,10 +100,29 @@ export function StaticDiagram({ svg, type }: { svg: string; type: string }) {
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
+
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
-      zoomAt(event.clientX, event.clientY, event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP);
+
+      // Normalizamos: según el dispositivo el delta viene en píxeles, líneas o
+      // páginas, y sin esto un ratón "salta" comparado con un trackpad.
+      const unit =
+        event.deltaMode === 1 ? LINE_HEIGHT : event.deltaMode === 2 ? container.clientHeight : 1;
+      const deltaX = event.deltaX * unit;
+      const deltaY = event.deltaY * unit;
+
+      // El pinch del trackpad llega como wheel con ctrlKey. Es la convención
+      // que usan Figma o Excalidraw: rueda desplaza, pinch hace zoom.
+      if (event.ctrlKey || event.metaKey) {
+        // Proporcional al gesto: con un factor fijo por evento, un trackpad
+        // (decenas de eventos por gesto) disparaba el zoom sin control.
+        zoomAt(event.clientX, event.clientY, Math.exp(-deltaY * PINCH_SENSITIVITY));
+        return;
+      }
+
+      setView((current) => ({ ...current, x: current.x - deltaX, y: current.y - deltaY }));
     };
+
     container.addEventListener('wheel', onWheel, { passive: false });
     return () => container.removeEventListener('wheel', onWheel);
   }, [zoomAt]);
@@ -147,7 +175,12 @@ export function StaticDiagram({ svg, type }: { svg: string; type: string }) {
         <button type="button" onClick={() => zoomCentered(1 / ZOOM_STEP)} title="Alejar" aria-label="Alejar">
           −
         </button>
-        <button type="button" onClick={fit} title="Encuadrar (o doble clic)" aria-label="Encuadrar">
+        <button
+          type="button"
+          onClick={fit}
+          title="Encuadrar (o doble clic). Rueda: desplazar · ctrl+rueda o pinch: zoom"
+          aria-label="Encuadrar"
+        >
           ⤢
         </button>
       </div>
