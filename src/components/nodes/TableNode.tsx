@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import type { Column, TableData } from '../../lib/types';
+import type { TableNodeType } from './nodeTypes';
+import type { Column } from '../../lib/types';
 import { AnchorHandles } from './Handles';
 import { NODE_ANCHOR } from './anchors';
 import { useHighlight } from '../HighlightContext';
@@ -27,8 +28,7 @@ function ColumnRow({ column, linked }: { column: Column; linked: boolean }) {
   );
 }
 
-function TableNodeImpl({ id, data, selected }: NodeProps) {
-  const table = data as unknown as TableData;
+function TableNodeImpl({ id, data, selected }: NodeProps<TableNodeType>) {
   const highlight = useHighlight();
   const dimmed = highlight.active && !highlight.nodes.has(id);
 
@@ -36,17 +36,17 @@ function TableNodeImpl({ id, data, selected }: NodeProps) {
     <div className={`node node--table${selected ? ' is-selected' : ''}${dimmed ? ' is-dimmed' : ''}`}>
       <AnchorHandles base={NODE_ANCHOR} />
       <div className="node__header">
-        <span className="node__header-accent" style={table.headerColor ? { background: table.headerColor } : undefined} />
-        {table.schema && <span className="node__schema">{table.schema}.</span>}
-        <span>{table.name}</span>
-        {table.alias && <span className="node__badge">{table.alias}</span>}
+        <span className="node__header-accent" style={data.headerColor ? { background: data.headerColor } : undefined} />
+        {data.schema && <span className="node__schema">{data.schema}.</span>}
+        <span>{data.name}</span>
+        {data.alias && <span className="node__badge">{data.alias}</span>}
       </div>
       <div className="node__rows">
-        {table.columns.map((column) => (
+        {data.columns.map((column) => (
           <ColumnRow key={column.id} column={column} linked={highlight.anchors.has(column.id)} />
         ))}
       </div>
-      {table.note && <div className="node__note">{table.note}</div>}
+      {data.note && <div className="node__note">{data.note}</div>}
     </div>
   );
 }

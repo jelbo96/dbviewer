@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import type { EntityData } from '../../lib/types';
+import type { EntityNodeType } from './nodeTypes';
 import { AnchorHandles } from './Handles';
 import { NODE_ANCHOR } from './anchors';
 import { useHighlight } from '../HighlightContext';
@@ -11,8 +11,7 @@ const KEY_CLASS: Record<string, string> = {
   UK: 'node__key--uk',
 };
 
-function EntityNodeImpl({ id, data, selected }: NodeProps) {
-  const entity = data as unknown as EntityData;
+function EntityNodeImpl({ id, data, selected }: NodeProps<EntityNodeType>) {
   const highlight = useHighlight();
   const dimmed = highlight.active && !highlight.nodes.has(id);
 
@@ -21,10 +20,10 @@ function EntityNodeImpl({ id, data, selected }: NodeProps) {
       <AnchorHandles base={NODE_ANCHOR} />
       <div className="node__header">
         <span className="node__header-accent" />
-        <span>{entity.name}</span>
+        <span>{data.name}</span>
       </div>
       <div className="node__rows">
-        {entity.attributes.map((attr, index) => (
+        {data.attributes.map((attr, index) => (
           <div className="node__row" key={`${attr.name}-${index}`} title={attr.comment}>
             <span className="node__col-type">{attr.type}</span>
             <span className="node__col-name">{attr.name}</span>

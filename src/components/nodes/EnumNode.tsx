@@ -1,12 +1,11 @@
 import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import type { EnumData } from '../../lib/types';
+import type { EnumNodeType } from './nodeTypes';
 import { AnchorHandles } from './Handles';
 import { NODE_ANCHOR } from './anchors';
 import { useHighlight } from '../HighlightContext';
 
-function EnumNodeImpl({ id, data, selected }: NodeProps) {
-  const enumData = data as unknown as EnumData;
+function EnumNodeImpl({ id, data, selected }: NodeProps<EnumNodeType>) {
   const highlight = useHighlight();
   const dimmed = highlight.active && !highlight.nodes.has(id);
 
@@ -15,12 +14,12 @@ function EnumNodeImpl({ id, data, selected }: NodeProps) {
       <AnchorHandles base={NODE_ANCHOR} />
       <div className="node__header">
         <span className="node__header-accent" />
-        {enumData.schema && <span className="node__schema">{enumData.schema}.</span>}
-        <span>{enumData.name}</span>
+        {data.schema && <span className="node__schema">{data.schema}.</span>}
+        <span>{data.name}</span>
         <span className="node__badge">enum</span>
       </div>
       <div className="node__rows">
-        {enumData.values.map((value) => (
+        {data.values.map((value) => (
           <div className="node__row" key={value.name} title={value.note}>
             <span className="node__col-name">{value.name}</span>
           </div>

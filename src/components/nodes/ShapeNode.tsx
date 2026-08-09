@@ -1,7 +1,8 @@
 import { memo } from 'react';
 import type { CSSProperties, ReactElement } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import type { ShapeData, ShapeName } from '../../lib/types';
+import type { ShapeNodeType } from './nodeTypes';
+import type { ShapeName } from '../../lib/types';
 import { AnchorHandles } from './Handles';
 import { ALL_SIDES, NODE_ANCHOR } from './anchors';
 import { useHighlight } from '../HighlightContext';
@@ -141,25 +142,24 @@ const RENDERERS: Record<ShapeName, (p: ShapeProps) => ReactElement> = {
   ),
 };
 
-function ShapeNodeImpl({ id, data, selected, width, height }: NodeProps) {
-  const shape = data as unknown as ShapeData & { _w: number; _h: number };
+function ShapeNodeImpl({ id, data, selected, width, height }: NodeProps<ShapeNodeType>) {
   const highlight = useHighlight();
   const dimmed = highlight.active && !highlight.nodes.has(id);
 
-  const w = width ?? shape._w;
-  const h = height ?? shape._h;
-  const Render = RENDERERS[shape.shape] ?? RENDERERS.rect;
+  const w = width ?? data._w;
+  const h = height ?? data._h;
+  const Render = RENDERERS[data.shape] ?? RENDERERS.rect;
 
   return (
     <div
       className={`shape-node${selected ? ' is-selected' : ''}${dimmed ? ' is-dimmed' : ''}`}
-      style={shape.cssStyles ? parseStyles(shape.cssStyles) : undefined}
+      style={data.cssStyles ? parseStyles(data.cssStyles) : undefined}
     >
       <AnchorHandles base={NODE_ANCHOR} sides={ALL_SIDES} />
       <svg className="shape-node__svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
         <Render w={w} h={h} />
       </svg>
-      <div className="shape-node__label">{shape.label}</div>
+      <div className="shape-node__label">{data.label}</div>
     </div>
   );
 }
