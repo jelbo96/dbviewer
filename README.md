@@ -14,6 +14,10 @@ npm run dev
 
 - **Editor** con resaltado propio para DBML y Mermaid, errores en el margen y
   panel de diagnósticos con número de línea.
+- **Pestañas**: varios diagramas abiertos a la vez, cada uno con su lenguaje,
+  su acomodo y su nombre (doble clic para renombrar).
+- **Guardar / Importar** en `.dbv.json`: el archivo lleva el código *y* las
+  posiciones, así que al reabrirlo el diagrama se ve tal cual quedó.
 - **Canvas** (React Flow) con nodos arrastrables, zoom, pan, minimapa, grilla
   opcional y auto-layout con dagre en cualquier dirección.
 - **Las posiciones que arrastras se conservan.** Editar el texto no rehace el
@@ -39,7 +43,7 @@ npm run dev
 | Mermaid `erDiagram` | ✅ | atributos, PK/FK/UK, cardinalidades |
 | Mermaid `classDiagram` | ✅ | miembros, métodos, anotaciones, herencia/composición/agregación |
 | Mermaid `stateDiagram` | ✅ | estados y estados compuestos |
-| Resto (`sequenceDiagram`, `gantt`, `pie`, `mindmap`, …) | ❌ | se muestran con el render nativo de Mermaid, en modo estático |
+| Resto (`sequenceDiagram`, `gantt`, `pie`, `mindmap`, …) | ❌ | render nativo de Mermaid. No se arrastran las cajas, pero sí respetan la tipografía, la grilla y el export a PNG/SVG |
 
 ## Cómo está armado
 
@@ -64,7 +68,8 @@ fuente nueva es escribir un parser, no tocar el render.
 | `src/lib/measure.ts` | estimación de tamaños; **sus constantes deben coincidir con `styles/nodes.css`** |
 | `src/components/DiagramCanvas.tsx` | canvas, elección dinámica del lado de cada arista, cajas de grupo |
 | `src/components/EdgeMarkers.tsx` | marcadores SVG (pata de gallo, UML) |
-| `src/store/useStore.ts` | estado + persistencia |
+| `src/lib/document.ts` | pestañas y formato `.dbv.json` (serializar y validar al importar) |
+| `src/store/useStore.ts` | estado + persistencia (con migración de versiones) |
 
 ### Detalles que no son obvios
 
@@ -87,6 +92,13 @@ fuente nueva es escribir un parser, no tocar el render.
 - Los tamaños de caja se estiman en `measure.ts`, no se miden en el DOM. Por eso
   cada tipografía lleva un `widthFactor` en `lib/fonts.ts` y cambiarla vuelve a
   parsear.
+- **Los diagramas estáticos tienen su propia ruta de export**: ya son un SVG y
+  no pasan por React Flow, así que `exportStaticPng` los dibuja en un canvas en
+  vez de usar html-to-image.
+- La tipografía del render estático va por `themeVariables` de Mermaid: escribe
+  `font-family` inline en cada texto del SVG, así que desde CSS no se puede.
+- El estado guardado lleva versión. `migrate` convirtió el formato v1 (dos slots
+  fijos, `code.dbml` y `code.mermaid`) en pestañas sin perder nada.
 
 ## Comandos
 
@@ -113,3 +125,10 @@ es la variable `NODE_VERSION`.
 
 El sitio es estático y sin backend. Una sola ruta, así que no hace falta
 `_redirects` para SPA.
+
+**Al cambiar de dominio** hay que actualizar la URL en tres sitios, porque van
+absolutas y no hay build step que las inyecte:
+
+1. `index.html` — `canonical`, `og:url` y `og:image`
+2. `public/robots.txt` — la línea `Sitemap:`
+3. `public/sitemap.xml` — el `<loc>`
