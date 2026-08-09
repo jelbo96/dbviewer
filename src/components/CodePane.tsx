@@ -4,7 +4,7 @@ import { EditorView } from '@codemirror/view';
 import { forceLinting, linter, lintGutter, type Diagnostic as CmDiagnostic } from '@codemirror/lint';
 import { oneDark } from '@codemirror/theme-one-dark';
 
-import { useStore, selectCode } from '../store/useStore';
+import { useStore, selectCode, selectLang } from '../store/useStore';
 import type { Diagnostic } from '../lib/types';
 import { dbmlLanguage, mermaidLanguage } from '../editor/languages';
 
@@ -41,7 +41,8 @@ const baseTheme = EditorView.theme({
 });
 
 export function CodePane() {
-  const lang = useStore((state) => state.lang);
+  const lang = useStore(selectLang);
+  const activeId = useStore((state) => state.activeId);
   const code = useStore(selectCode);
   const setCode = useStore((state) => state.setCode);
   const theme = useStore((state) => state.theme);
@@ -57,12 +58,12 @@ export function CodePane() {
     if (view) forceLinting(view);
   }, [diagnostics]);
 
-  // El editor se remonta al cambiar de idioma (`key={lang}` abajo). Aun así
-  // descartamos cambios que lleguen con el idioma ya cambiado, para no escribir
-  // el texto de una pestaña en la ranura de la otra.
+  // El editor se remonta al cambiar de pestaña o de idioma (`key` abajo). Aun
+  // así descartamos cambios que lleguen tarde, para no escribir el texto de un
+  // documento dentro de otro.
   const handleChange = useCallback(
     (next: string) => {
-      if (useStore.getState().lang !== lang) return;
+      if (selectLang(useStore.getState()) !== lang) return;
       setCode(next);
     },
     [lang, setCode],
@@ -82,7 +83,7 @@ export function CodePane() {
   return (
     <div className="code-pane">
       <CodeMirror
-        key={lang}
+        key={`${activeId}:${lang}`}
         ref={editorRef}
         value={code}
         onChange={handleChange}

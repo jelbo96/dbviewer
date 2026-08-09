@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useStore, selectCode } from '../store/useStore';
+import { useStore, selectCode, selectLang } from '../store/useStore';
 import { parseDbml } from '../lib/dbml';
 import { getFont } from '../lib/fonts';
 import { setFontWidthFactor } from '../lib/measure';
@@ -13,7 +13,7 @@ const DEBOUNCE_MS = 260;
  * (mermaid es asíncrono y puede resolver fuera de orden).
  */
 export function useDiagramParser() {
-  const lang = useStore((state) => state.lang);
+  const lang = useStore(selectLang);
   const code = useStore(selectCode);
   const theme = useStore((state) => state.theme);
   // cambiar de tipografía cambia el ancho de las cajas: hay que remedir
@@ -45,7 +45,7 @@ export function useDiagramParser() {
 
       if (result.model?.fallbackToStatic) {
         try {
-          const svg = await renderMermaidSvg(code, theme === 'dark');
+          const svg = await renderMermaidSvg(code, theme === 'dark', getFont(fontKey).stack);
           if (token !== generation.current) return;
           setStaticSvg(svg);
           setParseResult(result.model, result.diagnostics);

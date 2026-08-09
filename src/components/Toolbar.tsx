@@ -1,12 +1,21 @@
 import { useState } from 'react';
 import { useReactFlow } from '@xyflow/react';
 
-import { useStore, selectCode } from '../store/useStore';
+import { useStore, selectCode, selectLang, selectDirection } from '../store/useStore';
 import type { FlowDirection, SourceLang } from '../lib/types';
 import { SAMPLES } from '../lib/samples';
 import { FONTS, getFont } from '../lib/fonts';
 import { Menu, type MenuItem } from './Menu';
-import { dbmlToSql, download, exportPng, exportSvg, type SqlDialect } from '../lib/exporters';
+import { AboutButton } from './AboutButton';
+import {
+  dbmlToSql,
+  download,
+  exportPng,
+  exportStaticPng,
+  exportStaticSvg,
+  exportSvg,
+  type SqlDialect,
+} from '../lib/exporters';
 
 const DIRECTIONS: { value: FlowDirection | 'auto'; label: string }[] = [
   { value: 'auto', label: 'Auto' },
@@ -24,14 +33,15 @@ const SQL_DIALECTS: { value: SqlDialect; label: string }[] = [
 ];
 
 export function Toolbar() {
-  const lang = useStore((state) => state.lang);
+  const lang = useStore(selectLang);
   const setLang = useStore((state) => state.setLang);
+  const addDocument = useStore((state) => state.addDocument);
   const code = useStore(selectCode);
   const theme = useStore((state) => state.theme);
   const setTheme = useStore((state) => state.setTheme);
   const fontKey = useStore((state) => state.fontKey);
   const setFontKey = useStore((state) => state.setFontKey);
-  const direction = useStore((state) => state.direction);
+  const direction = useStore(selectDirection);
   const setDirection = useStore((state) => state.setDirection);
   const snapToGrid = useStore((state) => state.snapToGrid);
   const toggleSnap = useStore((state) => state.toggleSnap);
@@ -42,6 +52,7 @@ export function Toolbar() {
   const model = useStore((state) => state.model);
   const diagnostics = useStore((state) => state.diagnostics);
   const parsing = useStore((state) => state.parsing);
+  const staticSvg = useStore((state) => state.staticSvg);
 
   const { getNodes } = useReactFlow();
   const [busy, setBusy] = useState<string | null>(null);
@@ -52,12 +63,11 @@ export function Toolbar() {
     if (next !== lang) setLang(next);
   };
 
+  // Los ejemplos abren una pestaña nueva en vez de pisar lo que estés editando.
   const loadSample = (id: string) => {
     const sample = SAMPLES.find((item) => item.id === id);
     if (!sample) return;
-    setLang(sample.lang);
-    // setLang no cambia el código; hay que escribirlo tras cambiar de pestaña.
-    useStore.setState((state) => ({ code: { ...state.code, [sample.lang]: sample.code } }));
+    addDocument({ lang: sample.lang, name: sample.label, code: sample.code });
   };
 
   const runExport = async (name: string, task: () => Promise<void> | void) => {
@@ -71,17 +81,31 @@ export function Toolbar() {
     }
   };
 
+  // Los diagramas estáticos (sequence, gantt, pie...) ya son un SVG y no pasan
+  // por React Flow, así que tienen su propia ruta de exportación.
+  const hasImage = Boolean(staticSvg) || model.nodes.length > 0;
+
   const exportItems: MenuItem[] = [
     {
       // los grupos entran en el encuadre: su recuadro sobresale de los nodos
       label: 'PNG (2x)',
-      onSelect: () => runExport('png', () => exportPng(getNodes(), `diagrama-${lang}.png`)),
-      disabled: !model.nodes.length,
+      onSelect: () =>
+        runExport('png', () =>
+          staticSvg
+            ? exportStaticPng(staticSvg, `diagrama-${lang}.png`)
+            : exportPng(getNodes(), `diagrama-${lang}.png`),
+        ),
+      disabled: !hasImage,
     },
     {
       label: 'SVG',
-      onSelect: () => runExport('svg', () => exportSvg(getNodes(), `diagrama-${lang}.svg`)),
-      disabled: !model.nodes.length,
+      onSelect: () =>
+        runExport('svg', () =>
+          staticSvg
+            ? exportStaticSvg(staticSvg, `diagrama-${lang}.svg`)
+            : exportSvg(getNodes(), `diagrama-${lang}.svg`),
+        ),
+      disabled: !hasImage,
     },
     {
       label: lang === 'dbml' ? 'Código .dbml' : 'Código .mmd',
@@ -206,6 +230,8 @@ export function Toolbar() {
         <span aria-hidden>{theme === 'dark' ? '☀' : '☾'}</span>
         {theme === 'dark' ? 'Claro' : 'Oscuro'}
       </button>
+
+      <AboutButton />
     </header>
   );
 }

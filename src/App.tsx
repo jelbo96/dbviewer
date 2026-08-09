@@ -5,6 +5,7 @@ import { useStore } from './store/useStore';
 import { useDiagramParser } from './hooks/useDiagramParser';
 import { getFont } from './lib/fonts';
 import { Toolbar } from './components/Toolbar';
+import { Tabs } from './components/Tabs';
 import { CodePane } from './components/CodePane';
 import { DiagnosticsBar } from './components/DiagnosticsBar';
 import { DiagramCanvas } from './components/DiagramCanvas';
@@ -82,6 +83,7 @@ export default function App() {
     <ReactFlowProvider>
       <div className="app">
         <Toolbar />
+        <Tabs />
         <div className="app__body">
           <aside className="app__editor" style={{ width: `${editorRatio * 100}%` }}>
             <CodePane />
