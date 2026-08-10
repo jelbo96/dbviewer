@@ -3,6 +3,8 @@
 Visor y editor de **DBML** y **Mermaid** con canvas interactivo: las cajas se
 arrastran y las relaciones se re-rutean solas.
 
+En vivo: <https://dbviewer.ijelvezh.workers.dev/>
+
 ```bash
 npm install
 npm run dev
