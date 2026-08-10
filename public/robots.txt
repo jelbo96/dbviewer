@@ -5,4 +5,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dbviewer.pages.dev/sitemap.xml
+Sitemap: https://dbviewer.ijelvezh.workers.dev/sitemap.xml

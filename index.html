@@ -2,14 +2,16 @@
 <html lang="es" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover: en iPhone el diagrama llega hasta los bordes; los
+         controles se separan del notch con env(safe-area-inset-*) en el CSS. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <title>dbviewer · editor de diagramas DBML y Mermaid</title>
     <meta
       name="description"
       content="Edita esquemas DBML y diagramas Mermaid y acomoda las cajas arrastrándolas. Exporta a PNG, SVG y SQL. Funciona en el navegador, sin cuenta."
     />
-    <link rel="canonical" href="https://dbviewer.pages.dev/" />
+    <link rel="canonical" href="https://dbviewer.ijelvezh.workers.dev/" />
     <meta name="author" content="Ignacio Jelvez" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -27,8 +29,8 @@
       property="og:description"
       content="Edita esquemas DBML y diagramas Mermaid y acomoda las cajas arrastrándolas. Exporta a PNG, SVG y SQL."
     />
-    <meta property="og:url" content="https://dbviewer.pages.dev/" />
-    <meta property="og:image" content="https://dbviewer.pages.dev/favicon.svg" />
+    <meta property="og:url" content="https://dbviewer.ijelvezh.workers.dev/" />
+    <meta property="og:image" content="https://dbviewer.ijelvezh.workers.dev/favicon.svg" />
     <meta property="og:locale" content="es_CL" />
     <meta name="twitter:card" content="summary" />
     <script>
