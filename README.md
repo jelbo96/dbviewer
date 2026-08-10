@@ -123,18 +123,24 @@ npm run build    # typecheck + build de producción
 npm run preview  # sirve el build
 ```
 
-## Despliegue (Cloudflare Pages)
+## Despliegue (Cloudflare Workers)
 
 | Ajuste | Valor |
 |---|---|
 | Build command | `npm run build` |
-| Output directory | `dist` |
+| Deploy command | `npx wrangler deploy` (previews: `npx wrangler versions upload`) |
 | Variables de entorno | ninguna |
 
-La versión de Node va fijada en `.nvmrc`. Es obligatorio: Cloudflare Pages usa
-Node 18 por defecto y ahí el build falla con `'node:util' does not provide an
-export named 'styleText'`. Si la plataforma ignorara el `.nvmrc`, el equivalente
-es la variable `NODE_VERSION`.
+**`wrangler.jsonc` es obligatorio.** No hay Worker que ejecutar, sólo archivos
+estáticos, y wrangler igual necesita que alguien le diga cuáles: sin el archivo
+el build compila bien y el deploy muere con *Missing entry-point to Worker script
+or to assets directory*. Ahí van el `name` (tiene que coincidir con el Worker
+conectado al repo) y `assets.directory`, que apunta a `dist`.
+
+La versión de Node va fijada en `.nvmrc`. Es obligatorio: por defecto Cloudflare
+usa Node 18 y ahí el build falla con `'node:util' does not provide an export
+named 'styleText'`. Si la plataforma ignorara el `.nvmrc`, el equivalente es la
+variable `NODE_VERSION`.
 
 El sitio es estático y sin backend. Una sola ruta, así que no hace falta
 `_redirects` para SPA.

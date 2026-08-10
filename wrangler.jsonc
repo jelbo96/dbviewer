@@ -1,0 +1,13 @@
+{
+  // Sitio estático en Cloudflare Workers: no hay Worker que ejecutar, sólo los
+  // archivos que deja `npm run build`. Sin este archivo `wrangler versions
+  // upload` no sabe qué subir y el deploy falla con "Missing entry-point to
+  // Worker script or to assets directory".
+  //
+  // `name` tiene que coincidir con el Worker conectado al repo en Cloudflare.
+  "name": "dbviewer",
+  "compatibility_date": "2026-08-10",
+  "assets": {
+    "directory": "./dist"
+  }
+}
