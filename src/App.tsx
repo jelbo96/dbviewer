@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, type CSSProperties } from 'react';
 import { ReactFlowProvider } from '@xyflow/react';
 
 import { useStore } from './store/useStore';
@@ -9,7 +9,7 @@ import { Tabs } from './components/Tabs';
 import { CodePane } from './components/CodePane';
 import { DiagnosticsBar } from './components/DiagnosticsBar';
 import { DiagramCanvas } from './components/DiagramCanvas';
-import { DiagramSheet } from './components/DiagramSheet';
+import { CodeSheet, SHEET_PEEK } from './components/CodeSheet';
 import { useMediaQuery, MOBILE_QUERY } from './hooks/useMediaQuery';
 
 import './styles/theme.css';
@@ -82,23 +82,18 @@ export default function App() {
     [setEditorRatio],
   );
 
-  // En móvil no caben dos columnas: el editor ocupa la pantalla y el diagrama
-  // vive en un panel que sube desde abajo.
+  // En móvil no caben dos columnas: el diagrama —que es lo que se viene a ver—
+  // ocupa la pantalla y el código vive en un drawer que sube desde abajo.
   if (isMobile) {
     return (
       <ReactFlowProvider>
-        <div className="app app--mobile">
+        <div className="app app--mobile" style={{ '--sheet-peek': `${SHEET_PEEK}px` } as CSSProperties}>
           <Toolbar />
           <Tabs />
           <div className="app__body">
-            <aside className="app__editor">
-              <CodePane />
-              <DiagnosticsBar />
-            </aside>
-          </div>
-          <DiagramSheet>
             <DiagramCanvas />
-          </DiagramSheet>
+          </div>
+          <CodeSheet />
         </div>
       </ReactFlowProvider>
     );

@@ -7,6 +7,7 @@ import { SAMPLES } from '../lib/samples';
 import { FONTS, getFont } from '../lib/fonts';
 import { Menu, type MenuItem } from './Menu';
 import { AboutButton } from './AboutButton';
+import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery';
 import {
   dbmlToSql,
   download,
@@ -56,6 +57,7 @@ export function Toolbar() {
 
   const { getNodes } = useReactFlow();
   const [busy, setBusy] = useState<string | null>(null);
+  const isMobile = useMediaQuery(MOBILE_QUERY);
 
   const errors = diagnostics.filter((d) => d.severity === 'error').length;
 
@@ -185,14 +187,18 @@ export function Toolbar() {
         Grilla
       </button>
 
-      <button
-        type="button"
-        className={`tb-btn${showMinimap ? ' is-active' : ''}`}
-        onClick={toggleMinimap}
-        title="Mostrar minimapa"
-      >
-        Minimapa
-      </button>
+      {/* en móvil el minimapa está oculto por CSS: se comería media pantalla,
+          así que el botón no tendría nada que conmutar */}
+      {!isMobile && (
+        <button
+          type="button"
+          className={`tb-btn${showMinimap ? ' is-active' : ''}`}
+          onClick={toggleMinimap}
+          title="Mostrar minimapa"
+        >
+          Minimapa
+        </button>
+      )}
 
       <div className="toolbar__divider" />
 

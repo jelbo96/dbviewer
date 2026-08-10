@@ -32,6 +32,9 @@ npm run dev
   ajuste al arrastrar, 20px).
 - **Selector de tipografía** para el diagrama: Sistema, Helvetica, Redondeada,
   Serif y Monoespaciada. Los anchos de caja se recalculan al cambiarla.
+- **En móvil** el diagrama ocupa la pantalla y el código vive en un drawer
+  inferior: cerrado deja ver sólo el asa, y sube a media pantalla o a pantalla
+  completa arrastrando, tocando el asa o con el botón de ampliar.
 - Tema claro y oscuro; la primera vez sigue la preferencia del sistema.
 
 ## Soporte por tipo de diagrama
@@ -70,6 +73,7 @@ fuente nueva es escribir un parser, no tocar el render.
 | `src/components/EdgeMarkers.tsx` | marcadores SVG (pata de gallo, UML) |
 | `src/lib/document.ts` | pestañas y formato `.dbv.json` (serializar y validar al importar) |
 | `src/store/useStore.ts` | estado + persistencia (con migración de versiones) |
+| `src/components/CodeSheet.tsx` | drawer del código en móvil (anclas, arrastre, teclado) |
 
 ### Detalles que no son obvios
 
@@ -99,6 +103,15 @@ fuente nueva es escribir un parser, no tocar el render.
   `font-family` inline en cada texto del SVG, así que desde CSS no se puede.
 - El estado guardado lleva versión. `migrate` convirtió el formato v1 (dos slots
   fijos, `code.dbml` y `code.mermaid`) en pestañas sin perder nada.
+- **El teclado del móvil no encoge el layout.** En iOS `innerHeight` no cambia al
+  abrirlo: sólo el *visual viewport*, así que un panel `position: fixed` queda
+  debajo del teclado. `useViewport` mide los dos y el drawer se sube justo lo que
+  el teclado ocupa (y usa todo el espacio que queda mientras se escribe).
+- El drawer va *sobre* el canvas, no dentro del flujo: el diagrama no cambia de
+  tamaño al abrirlo y no hace falta reencuadrarlo. El cuerpo sólo reserva el alto
+  del asa (`--sheet-peek`), que sale de `SHEET_PEEK` en `CodeSheet.tsx`.
+- El editor usa 16px en móvil: por debajo de eso Safari hace zoom al enfocarlo y
+  deja la app descuadrada.
 
 ## Comandos
 

@@ -459,13 +459,13 @@
   text-decoration: underline;
 }
 
-/* --- móvil: el diagrama en un panel que sube desde abajo --- */
+/* --- móvil: el código en un drawer que sube desde abajo --- */
 
 .sheet {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  /* el alto y el `bottom` (para esquivar el teclado) los pone el componente */
   z-index: 40;
   display: flex;
   flex-direction: column;
@@ -476,13 +476,21 @@
   overflow: hidden;
 }
 
+/* a pantalla completa ya no es una tarjeta sobre el diagrama */
+.sheet--full {
+  border-radius: 0;
+  /* el asa quedaría bajo el notch / la barra de estado */
+  padding-top: env(safe-area-inset-top);
+}
+
 .sheet__handle {
   flex: none;
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 8px 0 6px;
+  justify-content: center;
+  height: var(--sheet-peek, 46px);
+  padding: 0 8px;
   cursor: grab;
   touch-action: none;
   user-select: none;
@@ -492,11 +500,23 @@
   cursor: grabbing;
 }
 
+/* el asa clásica, centrada arriba: es la señal de "esto se arrastra" */
 .sheet__grip {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 38px;
   height: 4px;
   border-radius: 99px;
   background: var(--border-strong);
+}
+
+.sheet__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
 }
 
 .sheet__label {
@@ -507,22 +527,63 @@
   color: var(--text-faint);
 }
 
+.sheet__lang {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 1.5px 4px;
+  border-radius: 3px;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* cerrado el panel de diagnósticos no se ve: el conteo va en el asa */
+.sheet__errors {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--danger);
+}
+
+.sheet__toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* borde permanente: en táctil no hay hover que revele el botón */
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.sheet__toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
 .sheet__body {
   position: relative;
-  /* flex para que el .canvas (que es flex:1) tome alto; si no queda en 0 */
   display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
+  /* el scroll del código no arrastra la página ni dispara pull-to-refresh */
+  overscroll-behavior: contain;
+  /* barra de gestos del iPhone */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .app--mobile .app__body {
-  /* el panel tapa la parte baja; el editor no debe quedar debajo */
-  padding-bottom: 76px;
-}
-
-.app--mobile .app__editor {
-  width: 100%;
-  border-right: none;
+  /* el drawer cerrado tapa la parte baja; el diagrama no debe quedar debajo */
+  padding-bottom: var(--sheet-peek, 46px);
 }
 
 @media (max-width: 860px) {
@@ -530,6 +591,9 @@
     height: 42px;
     gap: 4px;
     padding: 0 8px;
+    /* con viewport-fit=cover el notch se come el borde en modo standalone */
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
   }
 
   .toolbar__brand strong,
@@ -539,16 +603,34 @@
 
   .tb-btn,
   .tb-select {
-    height: 26px;
+    height: 28px;
     font-size: 12px;
+  }
+
+  .tabs {
+    height: 38px;
   }
 
   .tab {
     max-width: 150px;
+    height: 32px;
+  }
+
+  .tabs__action {
+    height: 30px;
+    min-width: 32px;
   }
 
   /* el minimapa se come media pantalla en móvil */
   .react-flow__minimap {
     display: none;
+  }
+
+  /*
+   * 16px: por debajo de eso Safari en iOS hace zoom al enfocar el editor y deja
+   * la app descuadrada. Gana en especificidad al tema de CodeMirror (.cm-editor).
+   */
+  .code-pane .cm-editor {
+    font-size: 16px;
   }
 }

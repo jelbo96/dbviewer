@@ -2,7 +2,9 @@
 <html lang="es" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover: en iPhone el diagrama llega hasta los bordes; los
+         controles se separan del notch con env(safe-area-inset-*) en el CSS. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <title>dbviewer · editor de diagramas DBML y Mermaid</title>
     <meta
