@@ -15,7 +15,10 @@ npm run dev
 - **Editor** con resaltado propio para DBML y Mermaid, errores en el margen y
   panel de diagnósticos con número de línea.
 - **Pestañas**: varios diagramas abiertos a la vez, cada uno con su lenguaje,
-  su acomodo y su nombre (doble clic para renombrar).
+  su acomodo y su nombre (doble clic para renombrar). El lenguaje se elige al
+  crear la pestaña —en el `+`— o viene en el archivo importado, y no cambia
+  después: DBML y Mermaid son sintaxis distintas y cambiarlo obligaría a tirar
+  el código.
 - **Responsive**: en móvil los controles pasan a un menú desplegable y el
   diagrama vive en un panel inferior.
 - **Guardar / Importar** en `.dbv.json`: el archivo lleva el código *y* las
@@ -24,7 +27,7 @@ npm run dev
   opcional y auto-layout con dagre en cualquier dirección.
 - **Las posiciones que arrastras se conservan.** Editar el texto no rehace el
   acomodo: sólo se auto-posicionan los nodos nuevos. Todo se guarda en
-  `localStorage`, por lenguaje.
+  `localStorage`, por pestaña.
 - **Selección con foco**: al elegir una tabla se atenúa lo no relacionado y se
   resaltan las columnas exactas que participan en cada relación.
 - **Exportar** a PNG, SVG, el código fuente, y —desde DBML— SQL para
