@@ -90,6 +90,11 @@ export function EdgeMarkers() {
   return (
     <svg aria-hidden width={0} height={0} style={{ position: 'absolute' }}>
       <defs>
+        {/* relleno de las formas del flowchart; los stops salen de la paleta */}
+        <linearGradient id="dbv-node-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--node-grad-top)" />
+          <stop offset="100%" stopColor="var(--node-grad-bottom)" />
+        </linearGradient>
         {DEFS.map((def) => (
           <marker
             key={def.id}

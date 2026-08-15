@@ -14,6 +14,13 @@ export interface FontOption {
 
 export const FONTS: FontOption[] = [
   {
+    // única webfont del proyecto, empaquetada en public/fonts
+    key: 'dm-sans',
+    label: 'DM Sans',
+    stack: "'DM Sans', ui-sans-serif, system-ui, sans-serif",
+    widthFactor: 0.95,
+  },
+  {
     key: 'system',
     label: 'Sistema',
     stack: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Inter, sans-serif",

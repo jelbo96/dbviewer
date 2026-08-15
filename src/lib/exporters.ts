@@ -3,6 +3,33 @@ import { toPng, toSvg } from 'html-to-image';
 
 export type SqlDialect = 'postgres' | 'mysql' | 'mssql' | 'oracle';
 
+const FONT_URL = '/fonts/dm-sans-latin.woff2';
+let fontCssPromise: Promise<string> | null = null;
+
+/**
+ * `@font-face` con la fuente en base64, para incrustarla en la imagen.
+ *
+ * Hace falta porque el export se rasteriza desde un SVG aislado, que no ve las
+ * fuentes del documento: sin esto, un diagrama en DM Sans se exportaba con la
+ * tipografía de reemplazo. Se calcula una vez y se cachea.
+ */
+export function embeddedFontCss(): Promise<string> {
+  fontCssPromise ??= (async () => {
+    try {
+      const response = await fetch(FONT_URL);
+      if (!response.ok) return '';
+      const bytes = new Uint8Array(await response.arrayBuffer());
+      let binary = '';
+      for (const byte of bytes) binary += String.fromCharCode(byte);
+      return `@font-face{font-family:'DM Sans';font-style:normal;font-weight:100 1000;src:url(data:font/woff2;base64,${btoa(binary)}) format('woff2');}`;
+    } catch {
+      // sin la fuente la imagen sale con el fallback, pero no falla el export
+      return '';
+    }
+  })();
+  return fontCssPromise;
+}
+
 export function download(filename: string, content: string, mime = 'text/plain') {
   const blob = new Blob([content], { type: `${mime};charset=utf-8` });
   const url = URL.createObjectURL(blob);
@@ -99,9 +126,10 @@ async function captureCanvas(nodes: Node[], scale: number, format: 'png' | 'svg'
     width,
     height,
     pixelRatio: scale,
-    // usamos stacks de fuentes del sistema: intentar embeber webfonts sólo
-    // provoca errores CORS con hojas de estilo de terceros inyectadas en la página
-    skipFonts: true,
+    // Pasamos el CSS ya resuelto en vez de dejar que html-to-image recolecte:
+    // así incluimos nuestra webfont y de paso no toca hojas de terceros, que
+    // provocaban errores CORS.
+    fontEmbedCSS: await embeddedFontCss(),
     filter: (node: HTMLElement) =>
       !(node.classList && EXCLUDED.some((className) => node.classList.contains(className))),
   };
@@ -170,17 +198,24 @@ function svgSize(svg: string): { width: number; height: number } {
  * Los diagramas sin soporte interactivo (sequence, gantt, pie...) ya son un
  * SVG: no pasan por React Flow ni por html-to-image.
  */
-export function exportStaticSvg(svg: string, filename: string) {
-  download(filename, svg, 'image/svg+xml');
+/** Inyecta el `@font-face` dentro del SVG, que se rasteriza aislado. */
+function withEmbeddedFont(svg: string, fontCss: string): string {
+  if (!fontCss) return svg;
+  return svg.replace(/<svg([^>]*)>/, `<svg$1><style>${fontCss}</style>`);
+}
+
+export async function exportStaticSvg(svg: string, filename: string) {
+  download(filename, withEmbeddedFont(svg, await embeddedFontCss()), 'image/svg+xml');
 }
 
 export async function exportStaticPng(svg: string, filename: string, scale = 2) {
   const { width, height } = svgSize(svg);
+  const svgWithFont = withEmbeddedFont(svg, await embeddedFontCss());
   const background = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
 
   // data URL en base64 y no un blob: un blob: URL marca el canvas como
   // contaminado en algunos navegadores y toDataURL falla.
-  const encoded = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
+  const encoded = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgWithFont)))}`;
   const image = new Image();
   image.src = encoded;
   await image.decode();

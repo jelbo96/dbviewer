@@ -20,8 +20,8 @@ export const PALETTES: Palette[] = [
   {
     key: 'fintoc',
     label: 'Fintoc',
-    suggestedFont: 'grotesk',
-    note: 'Inspirada en fintoc.com: azul #057AFF, alto contraste y esquinas poco redondeadas',
+    suggestedFont: 'dm-sans',
+    note: 'Inspirada en fintoc.com: DM Sans, azul #057AFF, alto contraste y esquinas poco redondeadas',
   },
   {
     key: 'blueprint',

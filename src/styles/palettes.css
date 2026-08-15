@@ -14,9 +14,11 @@
  */
 
 :root[data-palette='fintoc'] {
-  --radius: 6px;
-  --radius-sm: 4px;
-  --radius-lg: 8px;
+  /* Sus tarjetas son más redondeadas que los controles de la web (6px): en el
+     diagrama del hero rondan los 12px. */
+  --radius: 12px;
+  --radius-sm: 6px;
+  --radius-lg: 16px;
   --accent: #057aff;
   --accent-soft: rgba(5, 122, 255, 0.14);
 }
@@ -24,13 +26,17 @@
 :root[data-palette='fintoc'][data-theme='light'] {
   --canvas-bg: #f4f6f6;
   --grid-dot: #dde0e2;
-  --grid-line: #e7eaeb;
+  --grid-line: #e9ecec;
   --grid-line-strong: #dde0e2;
 
   --node-bg: #ffffff;
-  --node-header: #f4f6f6;
-  --border: #dde0e2;
-  --border-strong: #c9ced1;
+  --node-grad-top: #ffffff;
+  --node-grad-bottom: #fbfcfc;
+  --header-gradient: linear-gradient(180deg, #ffffff 0%, #f4f6f6 100%);
+  --node-header: #f8f9f9;
+  --node-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --border: #e4e7e8;
+  --border-strong: #d5d9db;
 
   --text: #080909;
   --text-dim: #4a5154;
@@ -45,35 +51,44 @@
   --group-stroke: #c9ced1;
   --group-fill: rgba(5, 122, 255, 0.04);
 
-  /* su UI usa bordes nítidos y sombras casi imperceptibles */
-  --shadow: 0 1px 2px rgba(8, 9, 9, 0.06);
+  --shadow: 0 8px 24px rgba(8, 9, 9, 0.07), 0 1px 2px rgba(8, 9, 9, 0.05);
 }
 
 :root[data-palette='fintoc'][data-theme='dark'] {
   --canvas-bg: #000000;
-  --grid-dot: #17191a;
-  --grid-line: #101112;
-  --grid-line-strong: #1d2021;
+  /* la grilla casi no se ve: su fondo es negro liso */
+  --grid-dot: #131516;
+  --grid-line: #0d0f0f;
+  --grid-line-strong: #17191a;
 
-  --node-bg: #0b0c0c;
-  --node-header: #131516;
-  --border: #17191a;
-  --border-strong: #24282a;
+  --node-bg: #131516;
+  /* Volumen: gradiente vertical de gris a casi negro, como sus tarjetas. Sin
+     esto las cajas se ven planas y pegadas al fondo. */
+  --node-grad-top: #1c1f20;
+  --node-grad-bottom: #0e1011;
+  --header-gradient: linear-gradient(180deg, #24282a 0%, #1a1d1e 100%);
+  --node-header: #1f2324;
+  /* luz cenital en el borde superior */
+  --node-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --border: #1f2324;
+  --border-strong: #2b2f31;
 
   --text: #f4f6f6;
   --text-dim: #a2abaf;
   --text-faint: #6b7478;
 
-  --edge: #3f4649;
+  /* aristas apenas insinuadas, el color fuerte se reserva al acento */
+  --edge: #363b3d;
   --edge-active: #057aff;
 
   --pk: #eab308;
   --fk: #057aff;
   --enum-accent: #4da3ff;
-  --group-stroke: #24282a;
-  --group-fill: rgba(5, 122, 255, 0.06);
+  --group-stroke: #1f2324;
+  --group-fill: rgba(255, 255, 255, 0.015);
 
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  /* sombra profunda: es lo que despega las tarjetas del negro */
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.75), 0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 /* --- Blueprint ---------------------------------------------------------- */

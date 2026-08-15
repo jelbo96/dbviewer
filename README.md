@@ -33,7 +33,7 @@ npm run dev
 - **Selector de tipografía** para el diagrama: Sistema, Helvetica, Redondeada,
   Serif y Monoespaciada. Los anchos de caja se recalculan al cambiarla.
 - **Paletas** del diagrama, combinables con el tema claro/oscuro:
-  Predeterminada, Fintoc y Blueprint.
+  Predeterminada, Fintoc y Blueprint. Cada una puede sugerir su tipografía.
 - Tema claro y oscuro; la primera vez sigue la preferencia del sistema.
 
 ## Soporte por tipo de diagrama
@@ -105,9 +105,19 @@ fuente nueva es escribir un parser, no tocar el render.
 - Las paletas sólo redefinen variables que ya existen en `theme.css`, así que
   una paleta nueva es un bloque CSS y una entrada en `palettes.ts`. Se cruzan
   con `[data-theme]`, por eso cada una declara su variante clara y su oscura.
-- La paleta *Fintoc* toma color y forma de los estilos computados de su sitio
-  (azul `#057AFF`, radios de 6px). Es inspiración visual: no incluye logos,
-  marcas ni webfonts de terceros, y la app sigue funcionando sin red.
+- La paleta *Fintoc* toma color, forma y tipografía de los estilos computados
+  de su sitio (azul `#057AFF`, DM Sans). Es inspiración visual: no incluye
+  logos ni marcas.
+- **DM Sans va empaquetada** en `public/fonts`, no se pide a Google: así la app
+  funciona sin red. Es variable font, así que un archivo de 36 KB cubre todos
+  los pesos. Licencia OFL 1.1, incluida junto al `.woff2`.
+- El export incrusta la fuente en base64 (`embeddedFontCss`). Sin eso las
+  imágenes salían con la tipografía de reemplazo, porque el PNG se rasteriza
+  desde un SVG aislado que no ve las fuentes del documento.
+- Lo que da volumen a las tarjetas son tres tokens: `--node-grad-top` /
+  `--node-grad-bottom` (gradiente) y `--node-highlight` (luz superior). Los
+  stops van sueltos porque los consumen dos sitios: el `background` de los
+  nodos HTML y un `<linearGradient>` para las formas SVG del flowchart.
 
 ## Comandos
 

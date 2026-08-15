@@ -5,10 +5,11 @@
   font-family: var(--font-diagram, var(--font-ui));
   font-size: 13px;
   color: var(--text);
-  background: var(--node-bg);
+  background: var(--node-gradient, var(--node-bg));
   border: 1px solid var(--border-strong);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  /* la luz interior superior es lo que separa una caja plana de una con volumen */
+  box-shadow: var(--node-highlight, inset 0 0 0 0 transparent), var(--shadow);
   overflow: hidden;
   width: 100%;
   height: 100%;
@@ -32,7 +33,7 @@
   align-items: center;
   gap: 6px;
   padding: 0 12px;
-  background: var(--node-header);
+  background: var(--header-gradient, var(--node-header));
   border-bottom: 1px solid var(--border);
   font-weight: 600;
   font-size: 13.5px;
@@ -223,7 +224,8 @@
 }
 
 .shape-node__shape {
-  fill: var(--shape-fill, var(--node-bg));
+  /* mismo relleno que las tarjetas HTML, vía <linearGradient> en los defs */
+  fill: var(--shape-fill, url('#dbv-node-fill'));
   stroke: var(--shape-stroke, var(--border-strong));
   stroke-width: var(--shape-stroke-width, 1.5);
   stroke-dasharray: var(--shape-dash, none);
