@@ -526,23 +526,6 @@
 }
 
 @media (max-width: 860px) {
-  .toolbar {
-    height: 42px;
-    gap: 4px;
-    padding: 0 8px;
-  }
-
-  .toolbar__brand strong,
-  .toolbar__spacer {
-    display: none;
-  }
-
-  .tb-btn,
-  .tb-select {
-    height: 26px;
-    font-size: 12px;
-  }
-
   .tab {
     max-width: 150px;
   }
@@ -551,4 +534,59 @@
   .react-flow__minimap {
     display: none;
   }
+}
+
+/* --- toolbar en móvil: los controles viven en un desplegable --- */
+
+.toolbar--mobile {
+  position: relative;
+  height: 44px;
+  gap: 8px;
+  padding: 0 10px;
+  /* sin scroll horizontal: ya no hay nada que se salga */
+  overflow: visible;
+}
+
+.toolbar__panel {
+  position: absolute;
+  top: 100%;
+  right: 8px;
+  left: 8px;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.toolbar__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.toolbar__group .tb-btn {
+  border-color: var(--border);
+  background: var(--bg-panel);
+}
+
+.toolbar__field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+}
+
+.toolbar__field .tb-select {
+  flex: 1;
+  max-width: 60%;
+  height: 30px;
 }

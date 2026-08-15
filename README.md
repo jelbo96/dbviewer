@@ -16,6 +16,8 @@ npm run dev
   panel de diagnósticos con número de línea.
 - **Pestañas**: varios diagramas abiertos a la vez, cada uno con su lenguaje,
   su acomodo y su nombre (doble clic para renombrar).
+- **Responsive**: en móvil los controles pasan a un menú desplegable y el
+  diagrama vive en un panel inferior.
 - **Guardar / Importar** en `.dbv.json`: el archivo lleva el código *y* las
   posiciones, así que al reabrirlo el diagrama se ve tal cual quedó.
 - **Canvas** (React Flow) con nodos arrastrables, zoom, pan, minimapa, grilla
