@@ -53,7 +53,6 @@ export function Toolbar() {
   const showMinimap = useStore((state) => state.showMinimap);
   const toggleMinimap = useStore((state) => state.toggleMinimap);
   const requestLayout = useStore((state) => state.requestLayout);
-  const requestFit = useStore((state) => state.requestFit);
   const model = useStore((state) => state.model);
   const diagnostics = useStore((state) => state.diagnostics);
   const parsing = useStore((state) => state.parsing);
@@ -236,12 +235,6 @@ export function Toolbar() {
     </button>
   );
 
-  const fitButton = (
-    <button type="button" className="tb-btn" onClick={requestFit} title="Encuadrar (ajustar a la vista)">
-      Encuadrar
-    </button>
-  );
-
   const gridButton = (
     <button
       type="button"
@@ -291,10 +284,7 @@ export function Toolbar() {
           <div className="toolbar__panel" role="menu">
             {/* las acciones cierran el panel para dejar ver el resultado;
                 los interruptores no, así se pueden combinar de una vez */}
-            <div className="toolbar__group" onClick={() => setMenuOpen(false)}>
-              {layoutButton}
-              {fitButton}
-            </div>
+            <div className="toolbar__group" onClick={() => setMenuOpen(false)}>{layoutButton}</div>
             <div className="toolbar__group">
               {gridButton}
               {minimapButton}
@@ -342,7 +332,6 @@ export function Toolbar() {
 
       {layoutButton}
       {directionSelect}
-      {fitButton}
       {gridButton}
       {minimapButton}
 
