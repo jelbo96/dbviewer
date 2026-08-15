@@ -131,7 +131,13 @@ export const useStore = create<AppState>()(
         // así que cambiarlo obligaba a tirar el código de la pestaña. El
         // lenguaje se fija al crear o importar el documento y ya no se toca.
         setCode: (code) => set((state) => patchActive(state, { code })),
-        setDirection: (direction) => set((state) => patchActive(state, { direction })),
+
+        // Cambiar la dirección es pedir un reacomodo, así que dispara el mismo
+        // nonce que el botón. Sin esto el selector no hacía nada: `mergePositions`
+        // sólo consulta la dirección para colocar nodos *sin* posición, y todos
+        // tienen una desde el primer render.
+        setDirection: (direction) =>
+          set((state) => ({ ...patchActive(state, { direction }), layoutNonce: state.layoutNonce + 1 })),
         setPositions: (positions) => set((state) => patchActive(state, { positions })),
 
         updatePositions: (updates) =>

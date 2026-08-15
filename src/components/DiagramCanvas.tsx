@@ -326,18 +326,25 @@ function InnerCanvas() {
     fitView({ padding: 0.18, maxZoom: 1, duration: 300 });
   }, [fitNonce, fitView]);
 
-  // Reacomodo automático: recalcula todo con dagre y descarta lo arrastrado.
+  // Reacomodo: recalcula todo con dagre y descarta lo arrastrado.
+  //
+  // Depende SÓLO del nonce. La dirección y la grilla se leen en el momento: si
+  // van en las dependencias, cambiar cualquiera de las dos rehace el layout por
+  // su cuenta y se lleva por delante las posiciones que el usuario movió a mano
+  // (togglear "Grilla" bastaba para perderlas).
   useEffect(() => {
     if (!layoutNonce) return;
-    const dir = direction === 'auto' ? undefined : direction;
-    const computed = autoLayout(useStore.getState().model, dir);
-    const fresh = snapToGrid ? snapPositions(computed, GRID_SIZE) : computed;
+    const state = useStore.getState();
+    const stored = selectActive(state).direction;
+    const dir = stored === 'auto' ? undefined : stored;
+    const computed = autoLayout(state.model, dir);
+    const fresh = state.snapToGrid ? snapPositions(computed, GRID_SIZE) : computed;
     setNodes((current) =>
       current.map((node) => (fresh[node.id] ? { ...node, position: fresh[node.id] } : node)),
     );
     setPositions(fresh);
     window.setTimeout(() => fitView({ padding: 0.18, maxZoom: 1, duration: 300 }), 60);
-  }, [layoutNonce, direction, snapToGrid, setPositions, fitView]);
+  }, [layoutNonce, setPositions, fitView]);
 
   if (staticSvg) {
     return <StaticDiagram svg={staticSvg} type={model.diagramType} />;
