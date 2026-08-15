@@ -586,23 +586,36 @@
   height: 30px;
 }
 
-/* --- interruptor claro/oscuro --- */
+/* --- interruptor claro/oscuro ---
+ * Los iconos son cajas del mismo tamaño que la perilla, repartidas con
+ * space-between: así el centro de cada icono coincide con una posición de la
+ * perilla sin cálculos a mano.
+ *
+ * El contorno va en `box-shadow` y no en `border` a propósito: con zoom
+ * fraccionario un borde de 1px se computa en 0.55px, el área interior cambia y
+ * el desplazamiento de la perilla deja de cuadrar con los iconos. Sin borde,
+ * ancho interior = 52 - 6 de padding = 46, y la perilla recorre 46 - 20 = 26.
+ */
 
 .theme-toggle {
   position: relative;
   flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 52px;
   height: 26px;
-  padding: 0;
-  border: 1px solid var(--border);
+  padding: 0 3px;
+  border: none;
   border-radius: 99px;
   background: var(--bg-elevated);
+  box-shadow: inset 0 0 0 1px var(--border);
   cursor: pointer;
-  transition: background 0.18s ease, border-color 0.18s ease;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
 }
 
 .theme-toggle:hover {
-  border-color: var(--border-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
 }
 
 .theme-toggle:focus-visible {
@@ -612,8 +625,9 @@
 
 .theme-toggle__thumb {
   position: absolute;
-  top: 2px;
-  left: 2px;
+  /* 3px: la mitad de lo que sobra en vertical (26 de alto - 20 de perilla) */
+  top: 3px;
+  left: 3px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -623,23 +637,25 @@
 }
 
 .theme-toggle.is-dark .theme-toggle__thumb {
-  transform: translateX(24px);
+  /* 46 de ancho interior - 20 de perilla: la deja bajo el segundo icono */
+  transform: translateX(26px);
 }
 
 .theme-toggle__icon {
-  position: absolute;
-  top: 50%;
-  width: 13px;
-  height: 13px;
-  transform: translateY(-50%);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
   color: var(--text-faint);
   transition: color 0.18s ease;
   pointer-events: none;
 }
 
 .theme-toggle__icon svg {
-  width: 100%;
-  height: 100%;
+  width: 13px;
+  height: 13px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.6;
@@ -648,14 +664,6 @@
 .theme-toggle__icon--moon svg {
   fill: currentColor;
   stroke: none;
-}
-
-.theme-toggle__icon--sun {
-  left: 5.5px;
-}
-
-.theme-toggle__icon--moon {
-  right: 5.5px;
 }
 
 /* el icono que queda sobre la perilla se pinta en contraste */
