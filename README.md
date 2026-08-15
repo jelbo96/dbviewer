@@ -32,6 +32,8 @@ npm run dev
   ajuste al arrastrar, 20px).
 - **Selector de tipografía** para el diagrama: Sistema, Helvetica, Redondeada,
   Serif y Monoespaciada. Los anchos de caja se recalculan al cambiarla.
+- **Paletas** del diagrama, combinables con el tema claro/oscuro:
+  Predeterminada, Fintoc y Blueprint.
 - Tema claro y oscuro; la primera vez sigue la preferencia del sistema.
 
 ## Soporte por tipo de diagrama
@@ -69,6 +71,7 @@ fuente nueva es escribir un parser, no tocar el render.
 | `src/components/DiagramCanvas.tsx` | canvas, elección dinámica del lado de cada arista, cajas de grupo |
 | `src/components/EdgeMarkers.tsx` | marcadores SVG (pata de gallo, UML) |
 | `src/lib/document.ts` | pestañas y formato `.dbv.json` (serializar y validar al importar) |
+| `src/lib/palettes.ts` + `styles/palettes.css` | paletas; sólo redefinen tokens de `theme.css` |
 | `src/store/useStore.ts` | estado + persistencia (con migración de versiones) |
 
 ### Detalles que no son obvios
@@ -99,6 +102,12 @@ fuente nueva es escribir un parser, no tocar el render.
   `font-family` inline en cada texto del SVG, así que desde CSS no se puede.
 - El estado guardado lleva versión. `migrate` convirtió el formato v1 (dos slots
   fijos, `code.dbml` y `code.mermaid`) en pestañas sin perder nada.
+- Las paletas sólo redefinen variables que ya existen en `theme.css`, así que
+  una paleta nueva es un bloque CSS y una entrada en `palettes.ts`. Se cruzan
+  con `[data-theme]`, por eso cada una declara su variante clara y su oscura.
+- La paleta *Fintoc* toma color y forma de los estilos computados de su sitio
+  (azul `#057AFF`, radios de 6px). Es inspiración visual: no incluye logos,
+  marcas ni webfonts de terceros, y la app sigue funcionando sin red.
 
 ## Comandos
 

@@ -5,6 +5,7 @@ import { EMPTY_MODEL } from '../lib/types';
 import type { Point, PositionMap } from '../lib/layout';
 import { DEFAULT_CODE } from '../lib/samples';
 import { DEFAULT_FONT } from '../lib/fonts';
+import { DEFAULT_PALETTE, getPalette } from '../lib/palettes';
 import { createDocument, uniqueName, type DiagramDocument } from '../lib/document';
 
 export type Theme = 'dark' | 'light';
@@ -25,6 +26,8 @@ interface PersistedState {
   theme: Theme;
   /** clave de `FONTS` para la tipografía del diagrama */
   fontKey: string;
+  /** clave de `PALETTES` para los colores del diagrama */
+  paletteKey: string;
   snapToGrid: boolean;
   showMinimap: boolean;
   editorRatio: number;
@@ -50,6 +53,7 @@ interface Actions {
   setCode: (code: string) => void;
   setTheme: (theme: Theme) => void;
   setFontKey: (fontKey: string) => void;
+  setPaletteKey: (paletteKey: string) => void;
   setDirection: (direction: FlowDirection | 'auto') => void;
   toggleSnap: () => void;
   toggleMinimap: () => void;
@@ -94,6 +98,7 @@ export const useStore = create<AppState>()(
         activeId: documents[0].id,
         theme: systemTheme(),
         fontKey: DEFAULT_FONT.key,
+        paletteKey: DEFAULT_PALETTE.key,
         snapToGrid: false,
         showMinimap: true,
         editorRatio: 0.36,
@@ -108,6 +113,14 @@ export const useStore = create<AppState>()(
 
         setTheme: (theme) => set({ theme }),
         setFontKey: (fontKey) => set({ fontKey }),
+
+        // La paleta arrastra la tipografía que la acompaña; el usuario puede
+        // cambiarla después y su elección manda.
+        setPaletteKey: (paletteKey) =>
+          set(() => {
+            const suggested = getPalette(paletteKey).suggestedFont;
+            return suggested ? { paletteKey, fontKey: suggested } : { paletteKey };
+          }),
         toggleSnap: () => set((state) => ({ snapToGrid: !state.snapToGrid })),
         toggleMinimap: () => set((state) => ({ showMinimap: !state.showMinimap })),
         setEditorRatio: (editorRatio) => set({ editorRatio }),
@@ -194,6 +207,7 @@ export const useStore = create<AppState>()(
         activeId: state.activeId,
         theme: state.theme,
         fontKey: state.fontKey,
+        paletteKey: state.paletteKey,
         snapToGrid: state.snapToGrid,
         showMinimap: state.showMinimap,
         editorRatio: state.editorRatio,
@@ -234,6 +248,7 @@ export const useStore = create<AppState>()(
           activeId: documents[Math.max(0, activeIndex)].id,
           theme: old.theme ?? systemTheme(),
           fontKey: old.fontKey ?? DEFAULT_FONT.key,
+          paletteKey: DEFAULT_PALETTE.key,
           snapToGrid: old.snapToGrid ?? false,
           showMinimap: old.showMinimap ?? true,
           editorRatio: old.editorRatio ?? 0.36,

@@ -13,6 +13,7 @@ import { DiagramSheet } from './components/DiagramSheet';
 import { useMediaQuery, MOBILE_QUERY } from './hooks/useMediaQuery';
 
 import './styles/theme.css';
+import './styles/palettes.css';
 import './styles/app.css';
 import './styles/nodes.css';
 import './styles/canvas.css';
@@ -60,6 +61,7 @@ function Splitter({ onDrag }: { onDrag: (clientX: number) => void }) {
 export default function App() {
   const theme = useStore((state) => state.theme);
   const fontKey = useStore((state) => state.fontKey);
+  const paletteKey = useStore((state) => state.paletteKey);
   const editorRatio = useStore((state) => state.editorRatio);
   const setEditorRatio = useStore((state) => state.setEditorRatio);
   const isMobile = useMediaQuery(MOBILE_QUERY);
@@ -73,6 +75,10 @@ export default function App() {
   useEffect(() => {
     document.documentElement.style.setProperty('--font-diagram', getFont(fontKey).stack);
   }, [fontKey]);
+
+  useEffect(() => {
+    document.documentElement.dataset.palette = paletteKey;
+  }, [paletteKey]);
 
   const handleDrag = useCallback(
     (clientX: number) => {

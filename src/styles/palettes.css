@@ -1,0 +1,141 @@
+/*
+ * Paletas alternativas del diagrama. Se aplican con [data-palette] en <html> y
+ * se combinan con [data-theme], así que cada una define su variante clara y su
+ * variante oscura.
+ *
+ * Sólo redefinen tokens ya existentes en theme.css: si una paleta no declara
+ * algo, hereda el valor por defecto.
+ */
+
+/* --- Fintoc -------------------------------------------------------------
+ * Valores tomados de los estilos computados de fintoc.com: azul de marca
+ * #057AFF, negro #080909, gris #F4F6F6, bordes #DDE0E2 / #17191A y radios
+ * pequeños (6px es el dominante en su sitio).
+ */
+
+:root[data-palette='fintoc'] {
+  --radius: 6px;
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --accent: #057aff;
+  --accent-soft: rgba(5, 122, 255, 0.14);
+}
+
+:root[data-palette='fintoc'][data-theme='light'] {
+  --canvas-bg: #f4f6f6;
+  --grid-dot: #dde0e2;
+  --grid-line: #e7eaeb;
+  --grid-line-strong: #dde0e2;
+
+  --node-bg: #ffffff;
+  --node-header: #f4f6f6;
+  --border: #dde0e2;
+  --border-strong: #c9ced1;
+
+  --text: #080909;
+  --text-dim: #4a5154;
+  --text-faint: #878f93;
+
+  --edge: #9aa3a7;
+  --edge-active: #057aff;
+
+  --pk: #b45309;
+  --fk: #057aff;
+  --enum-accent: #0057b8;
+  --group-stroke: #c9ced1;
+  --group-fill: rgba(5, 122, 255, 0.04);
+
+  /* su UI usa bordes nítidos y sombras casi imperceptibles */
+  --shadow: 0 1px 2px rgba(8, 9, 9, 0.06);
+}
+
+:root[data-palette='fintoc'][data-theme='dark'] {
+  --canvas-bg: #000000;
+  --grid-dot: #17191a;
+  --grid-line: #101112;
+  --grid-line-strong: #1d2021;
+
+  --node-bg: #0b0c0c;
+  --node-header: #131516;
+  --border: #17191a;
+  --border-strong: #24282a;
+
+  --text: #f4f6f6;
+  --text-dim: #a2abaf;
+  --text-faint: #6b7478;
+
+  --edge: #3f4649;
+  --edge-active: #057aff;
+
+  --pk: #eab308;
+  --fk: #057aff;
+  --enum-accent: #4da3ff;
+  --group-stroke: #24282a;
+  --group-fill: rgba(5, 122, 255, 0.06);
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Blueprint ---------------------------------------------------------- */
+
+:root[data-palette='blueprint'] {
+  --radius: 2px;
+  --radius-sm: 2px;
+  --radius-lg: 3px;
+  --accent: #38bdf8;
+  --accent-soft: rgba(56, 189, 248, 0.16);
+}
+
+:root[data-palette='blueprint'][data-theme='dark'] {
+  --canvas-bg: #0a2540;
+  --grid-dot: #14375c;
+  --grid-line: #0f2e4d;
+  --grid-line-strong: #1a4470;
+
+  --node-bg: #0c2b4a;
+  --node-header: #103352;
+  --border: #1a4470;
+  --border-strong: #2a5c8f;
+
+  --text: #e0f2fe;
+  --text-dim: #9fc7e8;
+  --text-faint: #6f9ec4;
+
+  --edge: #4a83b5;
+  --edge-active: #7dd3fc;
+
+  --pk: #fbbf24;
+  --fk: #7dd3fc;
+  --enum-accent: #a5b4fc;
+  --group-stroke: #2a5c8f;
+  --group-fill: rgba(56, 189, 248, 0.05);
+
+  --shadow: none;
+}
+
+:root[data-palette='blueprint'][data-theme='light'] {
+  --canvas-bg: #eaf2fa;
+  --grid-dot: #c3d8ec;
+  --grid-line: #d7e5f3;
+  --grid-line-strong: #bcd3ea;
+
+  --node-bg: #ffffff;
+  --node-header: #dbe9f7;
+  --border: #bcd3ea;
+  --border-strong: #93b6d8;
+
+  --text: #0a2540;
+  --text-dim: #365a7d;
+  --text-faint: #6f92b3;
+
+  --edge: #7ba3c8;
+  --edge-active: #0284c7;
+
+  --pk: #b45309;
+  --fk: #0284c7;
+  --enum-accent: #4f46e5;
+  --group-stroke: #93b6d8;
+  --group-fill: rgba(2, 132, 199, 0.05);
+
+  --shadow: none;
+}

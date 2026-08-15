@@ -5,6 +5,7 @@ import { useStore, selectCode, selectLang, selectDirection } from '../store/useS
 import type { FlowDirection, SourceLang } from '../lib/types';
 import { SAMPLES } from '../lib/samples';
 import { FONTS, getFont } from '../lib/fonts';
+import { PALETTES, getPalette } from '../lib/palettes';
 import { Menu, type MenuItem } from './Menu';
 import { AboutButton } from './AboutButton';
 import {
@@ -41,6 +42,8 @@ export function Toolbar() {
   const setTheme = useStore((state) => state.setTheme);
   const fontKey = useStore((state) => state.fontKey);
   const setFontKey = useStore((state) => state.setFontKey);
+  const paletteKey = useStore((state) => state.paletteKey);
+  const setPaletteKey = useStore((state) => state.setPaletteKey);
   const direction = useStore(selectDirection);
   const setDirection = useStore((state) => state.setDirection);
   const snapToGrid = useStore((state) => state.snapToGrid);
@@ -200,6 +203,20 @@ export function Toolbar() {
       <Menu label={busy ? 'Exportando…' : 'Exportar'} items={exportItems} />
 
       <div className="toolbar__spacer" />
+
+      <select
+        className="tb-select"
+        value={paletteKey}
+        onChange={(event) => setPaletteKey(event.target.value)}
+        title={getPalette(paletteKey).note ?? 'Paleta del diagrama'}
+        aria-label="Paleta del diagrama"
+      >
+        {PALETTES.map((palette) => (
+          <option key={palette.key} value={palette.key}>
+            {palette.label}
+          </option>
+        ))}
+      </select>
 
       <select
         className="tb-select"
