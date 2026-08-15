@@ -417,15 +417,10 @@
 
 /* --- acerca de --- */
 
-.about {
-  position: relative;
-  flex: none;
-}
-
+/* posicionado por JS (portal en <body>), igual que .menu__list: dentro de la
+   toolbar quedaría recortado por su overflow */
 .about__panel {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
+  position: fixed;
   z-index: 60;
   width: 260px;
   padding: 12px 14px;

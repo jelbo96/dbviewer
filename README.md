@@ -87,6 +87,9 @@ fuente nueva es escribir un parser, no tocar el render.
   shift+arrastre y muévelos juntos.
 - **Errores de sintaxis no borran el diagrama**: se conserva el último modelo
   válido mientras escribes.
+- Los desplegables van en un portal (`useAnchoredPanel`): la toolbar usa
+  `overflow-x` para hacer scroll y eso recorta también en vertical, así que un
+  panel colocado dentro de ella queda cortado por mucho z-index que lleve.
 - Los `defs` de los marcadores viven dentro del viewport de React Flow para que
   el export a imagen, que clona ese subárbol, se los lleve.
 - **El export no puede clonar las aristas tal cual.** React Flow las monta como
