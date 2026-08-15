@@ -103,7 +103,17 @@ function buildEdgeOverlay(viewport: HTMLElement, width: number, height: number):
   return overlay;
 }
 
-async function captureCanvas(nodes: Node[], scale: number, format: 'png' | 'svg'): Promise<string> {
+export interface ImageOptions {
+  scale?: number;
+  /** sin fondo: útil para pegar el diagrama sobre otro documento */
+  transparent?: boolean;
+}
+
+async function captureCanvas(
+  nodes: Node[],
+  format: 'png' | 'svg',
+  { scale = 1, transparent = false }: ImageOptions = {},
+): Promise<string> {
   const viewport = document.querySelector<HTMLElement>('.react-flow__viewport');
   const wrapper = document.querySelector<HTMLElement>('.react-flow');
   if (!viewport || !wrapper) throw new Error('No hay canvas que exportar');
@@ -120,7 +130,9 @@ async function captureCanvas(nodes: Node[], scale: number, format: 'png' | 'svg'
 
   const background = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
   const options = {
-    backgroundColor: background || '#ffffff',
+    // undefined y no 'transparent': html-to-image sólo omite el fondo si no
+    // recibe color
+    backgroundColor: transparent ? undefined : background || '#ffffff',
     // `width`/`height` son dimensiones CSS; la resolución la sube `pixelRatio`.
     // Multiplicar ambos por la escala hacía que la imagen saliera recortada.
     width,
@@ -147,6 +159,9 @@ async function captureCanvas(nodes: Node[], scale: number, format: 'png' | 'svg'
 
   wrapper.style.width = `${width}px`;
   wrapper.style.height = `${height}px`;
+  // `.react-flow` trae su propio background y html-to-image inlinea los estilos
+  // computados: sin esto la imagen "sin fondo" saldría opaca igualmente.
+  if (transparent) wrapper.style.background = 'transparent';
   viewport.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${transform.zoom})`;
 
   // como primer hijo: las aristas van detrás de los nodos, igual que en pantalla
@@ -168,12 +183,12 @@ async function captureCanvas(nodes: Node[], scale: number, format: 'png' | 'svg'
   }
 }
 
-export async function exportPng(nodes: Node[], filename: string, scale = 2) {
-  downloadDataUrl(filename, await captureCanvas(nodes, scale, 'png'));
+export async function exportPng(nodes: Node[], filename: string, options: ImageOptions = {}) {
+  downloadDataUrl(filename, await captureCanvas(nodes, 'png', { scale: 2, ...options }));
 }
 
-export async function exportSvg(nodes: Node[], filename: string) {
-  downloadDataUrl(filename, await captureCanvas(nodes, 1, 'svg'));
+export async function exportSvg(nodes: Node[], filename: string, options: ImageOptions = {}) {
+  downloadDataUrl(filename, await captureCanvas(nodes, 'svg', { scale: 1, ...options }));
 }
 
 // ---------------------------------------------------------------- estáticos
@@ -208,7 +223,11 @@ export async function exportStaticSvg(svg: string, filename: string) {
   download(filename, withEmbeddedFont(svg, await embeddedFontCss()), 'image/svg+xml');
 }
 
-export async function exportStaticPng(svg: string, filename: string, scale = 2) {
+export async function exportStaticPng(
+  svg: string,
+  filename: string,
+  { scale = 2, transparent = false }: ImageOptions = {},
+) {
   const { width, height } = svgSize(svg);
   const svgWithFont = withEmbeddedFont(svg, await embeddedFontCss());
   const background = getComputedStyle(document.documentElement).getPropertyValue('--canvas-bg').trim();
@@ -226,8 +245,10 @@ export async function exportStaticPng(svg: string, filename: string, scale = 2) 
   const context = canvas.getContext('2d');
   if (!context) throw new Error('No se pudo crear el lienzo de exportación');
 
-  context.fillStyle = background || '#ffffff';
-  context.fillRect(0, 0, canvas.width, canvas.height);
+  if (!transparent) {
+    context.fillStyle = background || '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+  }
   context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
   downloadDataUrl(filename, canvas.toDataURL('image/png'));

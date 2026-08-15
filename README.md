@@ -100,6 +100,10 @@ fuente nueva es escribir un parser, no tocar el render.
 - Los tamaños de caja se estiman en `measure.ts`, no se miden en el DOM. Por eso
   cada tipografía lleva un `widthFactor` en `lib/fonts.ts` y cambiarla vuelve a
   parsear.
+- **PNG y SVG se pueden exportar sin fondo.** No basta con omitir el
+  `backgroundColor`: `.react-flow` trae fondo propio y html-to-image inlinea
+  los estilos computados, así que hay que ponerlo transparente durante la
+  captura.
 - **Los diagramas estáticos tienen su propia ruta de export**: ya son un SVG y
   no pasan por React Flow, así que `exportStaticPng` los dibuja en un canvas en
   vez de usar html-to-image.

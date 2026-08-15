@@ -111,28 +111,30 @@ export function Toolbar() {
   // por React Flow, así que tienen su propia ruta de exportación.
   const hasImage = Boolean(staticSvg) || model.nodes.length > 0;
 
+  /** Una entrada por formato y tipo de fondo. */
+  const imageItem = (format: 'png' | 'svg', transparent: boolean): MenuItem => {
+    const name = `diagrama-${lang}${transparent ? '-transparente' : ''}.${format}`;
+    return {
+      label: `${format === 'png' ? 'PNG (2x)' : 'SVG'}${transparent ? ' · sin fondo' : ''}`,
+      disabled: !hasImage,
+      onSelect: () =>
+        runExport(format, () => {
+          // los grupos entran en el encuadre: su recuadro sobresale de los nodos
+          if (format === 'png') {
+            return staticSvg
+              ? exportStaticPng(staticSvg, name, { transparent })
+              : exportPng(getNodes(), name, { transparent });
+          }
+          return staticSvg ? exportStaticSvg(staticSvg, name) : exportSvg(getNodes(), name, { transparent });
+        }),
+    };
+  };
+
   const exportItems: MenuItem[] = [
-    {
-      // los grupos entran en el encuadre: su recuadro sobresale de los nodos
-      label: 'PNG (2x)',
-      onSelect: () =>
-        runExport('png', () =>
-          staticSvg
-            ? exportStaticPng(staticSvg, `diagrama-${lang}.png`)
-            : exportPng(getNodes(), `diagrama-${lang}.png`),
-        ),
-      disabled: !hasImage,
-    },
-    {
-      label: 'SVG',
-      onSelect: () =>
-        runExport('svg', () =>
-          staticSvg
-            ? exportStaticSvg(staticSvg, `diagrama-${lang}.svg`)
-            : exportSvg(getNodes(), `diagrama-${lang}.svg`),
-        ),
-      disabled: !hasImage,
-    },
+    imageItem('png', false),
+    imageItem('png', true),
+    imageItem('svg', false),
+    imageItem('svg', true),
     {
       label: lang === 'dbml' ? 'Código .dbml' : 'Código .mmd',
       onSelect: () => download(lang === 'dbml' ? 'esquema.dbml' : 'diagrama.mmd', code),
