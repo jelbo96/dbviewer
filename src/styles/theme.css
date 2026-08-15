@@ -29,6 +29,20 @@
   --danger: #ef4444;
   --warning: #f59e0b;
   --ok: #10b981;
+
+  /* Relleno y luz de las tarjetas. Por defecto planos; las paletas los usan
+     para dar profundidad sin tocar el resto del CSS. Los stops van sueltos
+     porque el gradiente lo consumen dos sitios: `background` en los nodos HTML
+     y un <linearGradient> para las formas SVG del flowchart.
+     Van en :root y no en cada tema porque se derivan de --node-bg, que sí
+     cambia con el tema: definidos sólo en el bloque oscuro, en claro quedaban
+     sin valor y las formas del flowchart salían negras (un `fill:url()` que no
+     resuelve no tiene color de reserva). */
+  --node-grad-top: var(--node-bg);
+  --node-grad-bottom: var(--node-bg);
+  --node-gradient: linear-gradient(180deg, var(--node-grad-top) 0%, var(--node-grad-bottom) 100%);
+  --header-gradient: var(--node-header);
+  --node-highlight: inset 0 0 0 0 transparent;
 }
 
 :root[data-theme='dark'] {
@@ -52,15 +66,6 @@
 
   --node-bg: #161b25;
   --node-header: #1f2734;
-  /* Relleno y luz de las tarjetas. Por defecto planos; las paletas los usan
-     para dar profundidad sin tocar el resto del CSS. Los stops van sueltos
-     porque el gradiente lo consumen dos sitios: `background` en los nodos HTML
-     y un <linearGradient> para las formas SVG del flowchart. */
-  --node-grad-top: var(--node-bg);
-  --node-grad-bottom: var(--node-bg);
-  --node-gradient: linear-gradient(180deg, var(--node-grad-top) 0%, var(--node-grad-bottom) 100%);
-  --header-gradient: var(--node-header);
-  --node-highlight: inset 0 0 0 0 transparent;
   --node-row-alt: rgba(255, 255, 255, 0.015);
 
   --edge: #5b6577;
