@@ -136,6 +136,31 @@ TableGroup contenido {
 `,
   },
   {
+    id: 'mermaid-sequence',
+    lang: 'mermaid',
+    label: 'Mermaid \u00b7 Secuencia',
+    code: `sequenceDiagram
+    actor Usuario
+    participant Frontend
+    participant API
+    participant BaseDeDatos
+
+    Usuario->>Frontend: Inicia sesi\u00f3n
+    Frontend->>API: POST /login
+    API->>BaseDeDatos: Buscar usuario
+    BaseDeDatos-->>API: Datos del usuario
+    API-->>Frontend: Token
+    Frontend-->>Usuario: Login exitoso
+
+    Usuario->>Frontend: Solicita perfil
+    Frontend->>API: GET /profile
+    API->>BaseDeDatos: Obtener perfil
+    BaseDeDatos-->>API: Datos del perfil
+    API-->>Frontend: Perfil
+    Frontend-->>Usuario: Muestra perfil
+`,
+  },
+  {
     id: 'mermaid-class',
     lang: 'mermaid',
     label: 'Mermaid · Clases',

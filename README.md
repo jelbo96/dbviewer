@@ -98,8 +98,11 @@ fuente nueva es escribir un parser, no tocar el render.
 - **Los diagramas estáticos tienen su propia ruta de export**: ya son un SVG y
   no pasan por React Flow, así que `exportStaticPng` los dibuja en un canvas en
   vez de usar html-to-image.
-- La tipografía del render estático va por `themeVariables` de Mermaid: escribe
-  `font-family` inline en cada texto del SVG, así que desde CSS no se puede.
+- **El render estático también sigue la paleta**, vía `themeVariables` de
+  Mermaid (`lib/mermaidTheme.ts`): escribe colores y tipografía inline dentro
+  del SVG, así que desde CSS no se pueden cambiar. Partimos del tema `base`,
+  el único que Mermaid deja personalizar entero. Limitación: sólo acepta
+  colores planos, así que ahí las cajas no llevan el gradiente.
 - El estado guardado lleva versión. `migrate` convirtió el formato v1 (dos slots
   fijos, `code.dbml` y `code.mermaid`) en pestañas sin perder nada.
 - Las paletas sólo redefinen variables que ya existen en `theme.css`, así que

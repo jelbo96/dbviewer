@@ -4,6 +4,7 @@ import { parseDbml } from '../lib/dbml';
 import { getFont } from '../lib/fonts';
 import { setFontWidthFactor } from '../lib/measure';
 import { parseMermaid, renderMermaidSvg } from '../lib/mermaid';
+import { mermaidThemeVariables } from '../lib/mermaidTheme';
 
 const DEBOUNCE_MS = 260;
 
@@ -21,6 +22,8 @@ export function useDiagramParser() {
   const theme = useStore((state) => state.theme);
   // cambiar de tipografía cambia el ancho de las cajas: hay que remedir
   const fontKey = useStore((state) => state.fontKey);
+  // la vista estática se repinta con la paleta, igual que el canvas
+  const paletteKey = useStore((state) => state.paletteKey);
   const setParseResult = useStore((state) => state.setParseResult);
   const setParsing = useStore((state) => state.setParsing);
   const setStaticSvg = useStore((state) => state.setStaticSvg);
@@ -48,7 +51,11 @@ export function useDiagramParser() {
 
       if (result.model?.fallbackToStatic) {
         try {
-          const svg = await renderMermaidSvg(code, theme === 'dark', getFont(fontKey).stack);
+          const svg = await renderMermaidSvg(
+            code,
+            theme === 'dark',
+            mermaidThemeVariables(getFont(fontKey).stack),
+          );
           if (token !== generation.current) return;
           setStaticSvg(svg);
           setParseResult(result.model, result.diagnostics);
@@ -66,5 +73,5 @@ export function useDiagramParser() {
     }, DEBOUNCE_MS);
 
     return () => window.clearTimeout(timer);
-  }, [code, lang, activeId, theme, fontKey, setParseResult, setParsing, setStaticSvg]);
+  }, [code, lang, activeId, theme, fontKey, paletteKey, setParseResult, setParsing, setStaticSvg]);
 }

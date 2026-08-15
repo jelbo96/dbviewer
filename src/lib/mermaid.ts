@@ -457,19 +457,24 @@ export async function parseMermaid(source: string): Promise<ParseResult> {
 let renderCounter = 0;
 
 /** Render nativo de mermaid a SVG, para los tipos sin soporte interactivo. */
-export async function renderMermaidSvg(source: string, dark: boolean, fontFamily?: string): Promise<string> {
+export async function renderMermaidSvg(
+  source: string,
+  dark: boolean,
+  themeVariables?: Record<string, string>,
+): Promise<string> {
   ensureInit();
   // 'strict' y no 'loose': este SVG termina en dangerouslySetInnerHTML, así que
   // dejamos que mermaid sanitice el HTML incrustado en las etiquetas.
   //
-  // La tipografía va por themeVariables: mermaid escribe `font-family` inline
-  // en cada texto del SVG, así que desde CSS no hay forma de cambiarla.
+  // Tipografía y colores van por themeVariables: mermaid los escribe inline
+  // dentro del SVG, así que desde CSS no hay forma de cambiarlos. Partimos de
+  // 'base', el único tema que se deja personalizar entero.
   mermaid.initialize({
     startOnLoad: false,
     securityLevel: 'strict',
-    theme: dark ? 'dark' : 'default',
+    theme: themeVariables ? 'base' : dark ? 'dark' : 'default',
     suppressErrorRendering: true,
-    themeVariables: fontFamily ? { fontFamily } : undefined,
+    themeVariables,
   });
   const { svg } = await mermaid.render(`mmd-static-${renderCounter++}`, source);
   return svg;
