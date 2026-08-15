@@ -7,7 +7,9 @@ import { SAMPLES } from '../lib/samples';
 import { FONTS, getFont } from '../lib/fonts';
 import { PALETTES, getPalette } from '../lib/palettes';
 import { Menu, type MenuItem } from './Menu';
-import { AboutButton } from './AboutButton';
+// Botón "acerca de" desactivado a petición. Para volver a mostrarlo,
+// descomenta este import y los dos <AboutButton /> de más abajo.
+// import { AboutButton } from './AboutButton';
 import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery';
 import {
   dbmlToSql,
@@ -330,7 +332,7 @@ export function Toolbar() {
 
             <div className="toolbar__group">
               {themeButton}
-              <AboutButton />
+              {/* <AboutButton /> */}
             </div>
           </div>
         )}
@@ -366,7 +368,7 @@ export function Toolbar() {
       {fontSelect}
       {status}
       {themeButton}
-      <AboutButton />
+      {/* <AboutButton /> */}
     </header>
   );
 }
