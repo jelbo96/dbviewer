@@ -9,6 +9,25 @@ export interface MenuItem {
   hint?: string;
 }
 
+/**
+ * En SVG y no con el carácter ▾: el glifo depende de la fuente (medía 4,4px de
+ * ancho real) y no hay forma de darle grosor ni tamaño fiables.
+ */
+function Caret() {
+  return (
+    <svg viewBox="0 0 10 10" aria-hidden focusable="false">
+      <path
+        d="M2 4L5 7L8 4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function Menu({ label, items, icon }: { label: string; items: MenuItem[]; icon?: ReactNode }) {
   const { open, position, toggle, close, buttonRef, panelRef } = useAnchoredPanel('left');
 
@@ -18,7 +37,7 @@ export function Menu({ label, items, icon }: { label: string; items: MenuItem[];
         {icon}
         {label}
         <span className="menu__caret" aria-hidden>
-          ▾
+          <Caret />
         </span>
       </button>
 

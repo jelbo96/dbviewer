@@ -135,8 +135,16 @@
 /* --- menú --- */
 
 .menu__caret {
-  font-size: 9px;
-  opacity: 0.6;
+  display: flex;
+  width: 11px;
+  height: 11px;
+  margin-left: -1px;
+  opacity: 0.75;
+}
+
+.menu__caret svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* posicionado por JS (portal en <body>) para escapar del scroll de la toolbar */
