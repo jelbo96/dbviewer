@@ -49,7 +49,6 @@ interface TransientState {
 }
 
 interface Actions {
-  setLang: (lang: SourceLang) => void;
   setCode: (code: string) => void;
   setTheme: (theme: Theme) => void;
   setFontKey: (fontKey: string) => void;
@@ -128,15 +127,9 @@ export const useStore = create<AppState>()(
         setParsing: (parsing) => set({ parsing }),
         setStaticSvg: (staticSvg) => set({ staticSvg }),
 
-        // cambiar de lenguaje reemplaza el contenido de la pestaña: son
-        // sintaxis distintas, no dos vistas de lo mismo
-        setLang: (lang) =>
-          set((state) => ({
-            ...patchActive(state, { lang, code: DEFAULT_CODE[lang], positions: {} }),
-            selectedId: null,
-            staticSvg: null,
-          })),
-
+        // No hay `setLang` a propósito: DBML y Mermaid son sintaxis distintas,
+        // así que cambiarlo obligaba a tirar el código de la pestaña. El
+        // lenguaje se fija al crear o importar el documento y ya no se toca.
         setCode: (code) => set((state) => patchActive(state, { code })),
         setDirection: (direction) => set((state) => patchActive(state, { direction })),
         setPositions: (positions) => set((state) => patchActive(state, { positions })),

@@ -1,9 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useStore } from '../store/useStore';
+import { useAnchoredPanel } from '../hooks/useAnchoredPanel';
+import type { SourceLang } from '../lib/types';
 import { FILE_EXTENSION, parseDocumentFile, serializeDocument, InvalidDiagramFile } from '../lib/document';
 import { download } from '../lib/exporters';
 
 const LANG_LABEL: Record<string, string> = { dbml: 'DBML', mermaid: 'MMD' };
+
+/**
+ * El lenguaje se elige aquí y no en la barra: es lo único que no se puede
+ * cambiar después sin tirar el código, porque son sintaxis distintas.
+ */
+const NEW_TAB: { lang: SourceLang; label: string }[] = [
+  { lang: 'dbml', label: 'Nueva pestaña DBML' },
+  { lang: 'mermaid', label: 'Nueva pestaña Mermaid' },
+];
 
 /** Nombre de archivo seguro a partir del título de la pestaña. */
 function fileNameFor(name: string): string {
@@ -28,6 +40,7 @@ export function Tabs() {
   const [draft, setDraft] = useState('');
   const fileInput = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const newTab = useAnchoredPanel();
 
   useEffect(() => {
     if (editingId) inputRef.current?.select();
@@ -113,7 +126,15 @@ export function Tabs() {
         );
       })}
 
-      <button type="button" className="tabs__action" title="Nueva pestaña" onClick={() => addDocument()}>
+      <button
+        ref={newTab.buttonRef}
+        type="button"
+        className="tabs__action"
+        title="Nueva pestaña"
+        aria-label="Nueva pestaña"
+        aria-expanded={newTab.open}
+        onClick={newTab.toggle}
+      >
         +
       </button>
 
@@ -139,6 +160,30 @@ export function Tabs() {
         hidden
         onChange={(event) => void importFiles(event.target.files)}
       />
+
+      {/* portal: la barra de pestañas tiene overflow-x y recortaría el panel */}
+      {newTab.open &&
+        newTab.position &&
+        createPortal(
+          <div className="menu__list" role="menu" ref={newTab.panelRef} style={newTab.position}>
+            {NEW_TAB.map((option) => (
+              <button
+                key={option.lang}
+                type="button"
+                role="menuitem"
+                className="menu__item"
+                onClick={() => {
+                  newTab.close();
+                  addDocument({ lang: option.lang });
+                }}
+              >
+                <span>{option.label}</span>
+                <span className="menu__hint">{LANG_LABEL[option.lang]}</span>
+              </button>
+            ))}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }

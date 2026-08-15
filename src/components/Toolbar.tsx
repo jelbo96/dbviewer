@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useReactFlow } from '@xyflow/react';
 
 import { useStore, selectCode, selectLang, selectDirection } from '../store/useStore';
-import type { FlowDirection, SourceLang } from '../lib/types';
+import type { FlowDirection } from '../lib/types';
 import { SAMPLES } from '../lib/samples';
 import { FONTS, getFont } from '../lib/fonts';
 import { PALETTES, getPalette } from '../lib/palettes';
@@ -38,8 +38,8 @@ const SQL_DIALECTS: { value: SqlDialect; label: string }[] = [
 ];
 
 export function Toolbar() {
+  // sólo de lectura: el lenguaje se fija al crear o importar la pestaña
   const lang = useStore(selectLang);
-  const setLang = useStore((state) => state.setLang);
   const addDocument = useStore((state) => state.addDocument);
   const code = useStore(selectCode);
   const fontKey = useStore((state) => state.fontKey);
@@ -82,10 +82,6 @@ export function Toolbar() {
   }, [menuOpen]);
 
   const errors = diagnostics.filter((d) => d.severity === 'error').length;
-
-  const switchLang = (next: SourceLang) => {
-    if (next !== lang) setLang(next);
-  };
 
   // Los ejemplos abren una pestaña nueva en vez de pisar lo que estés editando.
   const loadSample = (id: string) => {
@@ -154,25 +150,6 @@ export function Toolbar() {
     label: sample.label,
     onSelect: () => loadSample(sample.id),
   }));
-
-  const langSwitch = (
-    <div className="seg">
-      <button
-        type="button"
-        className={`seg__btn${lang === 'dbml' ? ' is-active' : ''}`}
-        onClick={() => switchLang('dbml')}
-      >
-        DBML
-      </button>
-      <button
-        type="button"
-        className={`seg__btn${lang === 'mermaid' ? ' is-active' : ''}`}
-        onClick={() => switchLang('mermaid')}
-      >
-        Mermaid
-      </button>
-    </div>
-  );
 
   const status = (
     <span className={`status${errors ? ' status--error' : ''}`}>
@@ -266,7 +243,6 @@ export function Toolbar() {
         <div className="toolbar__brand">
           <span className="toolbar__logo" aria-hidden />
         </div>
-        {langSwitch}
         <div className="toolbar__spacer" />
         {status}
         <button
@@ -325,8 +301,6 @@ export function Toolbar() {
         <span className="toolbar__logo" aria-hidden />
         <strong>dbviewer</strong>
       </div>
-
-      {langSwitch}
 
       <div className="toolbar__divider" />
 
