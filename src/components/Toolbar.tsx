@@ -10,6 +10,7 @@ import { Menu, type MenuItem } from './Menu';
 // Botón "acerca de" desactivado a petición. Para volver a mostrarlo,
 // descomenta este import y los dos <AboutButton /> de más abajo.
 // import { AboutButton } from './AboutButton';
+import { ThemeToggle } from './ThemeToggle';
 import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery';
 import {
   dbmlToSql,
@@ -41,8 +42,6 @@ export function Toolbar() {
   const setLang = useStore((state) => state.setLang);
   const addDocument = useStore((state) => state.addDocument);
   const code = useStore(selectCode);
-  const theme = useStore((state) => state.theme);
-  const setTheme = useStore((state) => state.setTheme);
   const fontKey = useStore((state) => state.fontKey);
   const setFontKey = useStore((state) => state.setFontKey);
   const paletteKey = useStore((state) => state.paletteKey);
@@ -231,19 +230,6 @@ export function Toolbar() {
     </select>
   );
 
-  const themeButton = (
-    <button
-      type="button"
-      className="tb-btn tb-btn--outlined"
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      title={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-      aria-label={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
-    >
-      <span aria-hidden>{theme === 'dark' ? '☀' : '☾'}</span>
-      {theme === 'dark' ? 'Claro' : 'Oscuro'}
-    </button>
-  );
-
   const layoutButton = (
     <button type="button" className="tb-btn" onClick={requestLayout} title="Reacomodar todo con auto-layout">
       Reacomodar
@@ -332,10 +318,11 @@ export function Toolbar() {
               <Menu label={busy ? 'Exportando…' : 'Exportar'} items={exportItems} />
             </div>
 
-            <div className="toolbar__group">
-              {themeButton}
-              {/* <AboutButton /> */}
-            </div>
+            <label className="toolbar__field">
+              <span>Tema</span>
+              <ThemeToggle />
+            </label>
+            {/* <AboutButton /> */}
           </div>
         )}
       </header>
@@ -369,7 +356,7 @@ export function Toolbar() {
       {paletteSelect}
       {fontSelect}
       {status}
-      {themeButton}
+      <ThemeToggle />
       {/* <AboutButton /> */}
     </header>
   );
