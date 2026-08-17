@@ -38,7 +38,7 @@ npm run dev
 - **Selector de tipografía** para el diagrama: Sistema, Helvetica, Redondeada,
   Serif y Monoespaciada. Los anchos de caja se recalculan al cambiarla.
 - **Paletas** del diagrama, combinables con el tema claro/oscuro:
-  Predeterminada, Fintoc y Blueprint. Cada una puede sugerir su tipografía.
+  Predeterminada, Suave y Blueprint. Cada una puede sugerir su tipografía.
 - Tema claro y oscuro; la primera vez sigue la preferencia del sistema.
 
 ## Soporte por tipo de diagrama
@@ -116,13 +116,14 @@ fuente nueva es escribir un parser, no tocar el render.
   el único que Mermaid deja personalizar entero. Limitación: sólo acepta
   colores planos, así que ahí las cajas no llevan el gradiente.
 - El estado guardado lleva versión. `migrate` convirtió el formato v1 (dos slots
-  fijos, `code.dbml` y `code.mermaid`) en pestañas sin perder nada.
+  fijos, `code.dbml` y `code.mermaid`) en pestañas sin perder nada, y en v3
+  renombró la clave de una paleta sin resetear la elección de quien la usaba.
 - Las paletas sólo redefinen variables que ya existen en `theme.css`, así que
   una paleta nueva es un bloque CSS y una entrada en `palettes.ts`. Se cruzan
   con `[data-theme]`, por eso cada una declara su variante clara y su oscura.
-- La paleta *Fintoc* toma color, forma y tipografía de los estilos computados
-  de su sitio (azul `#057AFF`, DM Sans). Es inspiración visual: no incluye
-  logos ni marcas.
+- La paleta *Suave* es la única que da relieve a las cajas: degradado vertical,
+  luz interior arriba y sombra amplia. Los valores salen de leer estilos
+  computados, no de memoria. Sólo color y forma: sin logos ni marcas.
 - **DM Sans va empaquetada** en `public/fonts`, no se pide a Google: así la app
   funciona sin red. Es variable font, así que un archivo de 36 KB cubre todos
   los pesos. Licencia OFL 1.1, incluida junto al `.woff2`.
