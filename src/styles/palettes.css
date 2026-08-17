@@ -7,15 +7,13 @@
  * algo, hereda el valor por defecto.
  */
 
-/* --- Fintoc -------------------------------------------------------------
- * Valores tomados de los estilos computados de fintoc.com: azul de marca
- * #057AFF, negro #080909, gris #F4F6F6, bordes #DDE0E2 / #17191A y radios
- * pequeños (6px es el dominante en su sitio).
+/* --- Suave ---------------------------------------------------------------
+ * Tarjetas con relieve: degradado vertical, luz interior arriba y sombra
+ * amplia. Azul #057AFF sobre grises muy claros (#F4F6F6) o casi negros
+ * (#080909), y esquinas de 12px.
  */
 
-:root[data-palette='fintoc'] {
-  /* Sus tarjetas son más redondeadas que los controles de la web (6px): en el
-     diagrama del hero rondan los 12px. */
+:root[data-palette='suave'] {
   --radius: 12px;
   --radius-sm: 6px;
   --radius-lg: 16px;
@@ -23,7 +21,7 @@
   --accent-soft: rgba(5, 122, 255, 0.14);
 }
 
-:root[data-palette='fintoc'][data-theme='light'] {
+:root[data-palette='suave'][data-theme='light'] {
   --canvas-bg: #f4f6f6;
   --grid-dot: #dde0e2;
   --grid-line: #e9ecec;
@@ -54,7 +52,7 @@
   --shadow: 0 8px 24px rgba(8, 9, 9, 0.07), 0 1px 2px rgba(8, 9, 9, 0.05);
 }
 
-:root[data-palette='fintoc'][data-theme='dark'] {
+:root[data-palette='suave'][data-theme='dark'] {
   --canvas-bg: #000000;
   /* la grilla casi no se ve: su fondo es negro liso */
   --grid-dot: #131516;
@@ -62,8 +60,8 @@
   --grid-line-strong: #17191a;
 
   --node-bg: #131516;
-  /* Volumen: gradiente vertical de gris a casi negro, como sus tarjetas. Sin
-     esto las cajas se ven planas y pegadas al fondo. */
+  /* Volumen: gradiente vertical de gris a casi negro. Sin esto las cajas se
+     ven planas y pegadas al fondo. */
   --node-grad-top: #1c1f20;
   --node-grad-bottom: #0e1011;
   --header-gradient: linear-gradient(180deg, #24282a 0%, #1a1d1e 100%);

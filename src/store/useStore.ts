@@ -200,7 +200,7 @@ export const useStore = create<AppState>()(
     },
     {
       name: 'dbviewer',
-      version: 2,
+      version: 3,
       partialize: (state): PersistedState => ({
         documents: state.documents,
         activeId: state.activeId,
@@ -215,9 +215,16 @@ export const useStore = create<AppState>()(
       /**
        * v1 guardaba dos slots fijos (`code.dbml` y `code.mermaid`). Los pasamos
        * a dos pestañas para no perder lo que el usuario tuviera escrito.
+       *
+       * v2 llamaba `fintoc` a la paleta que ahora es `suave`. Sin renombrar la
+       * clave guardada, a quien la tuviera elegida le volvía sola a la de por
+       * defecto: `getPalette` no encuentra la clave y cae al fallback.
        */
       migrate: (persisted, version) => {
-        if (version >= 2) return persisted as PersistedState;
+        if (version >= 2) {
+          const state = persisted as PersistedState;
+          return state.paletteKey === 'fintoc' ? { ...state, paletteKey: 'suave' } : state;
+        }
         const old = persisted as {
           lang?: SourceLang;
           code?: Record<SourceLang, string>;

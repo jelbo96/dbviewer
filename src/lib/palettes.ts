@@ -18,10 +18,10 @@ export interface Palette {
 export const PALETTES: Palette[] = [
   { key: 'default', label: 'Predeterminada' },
   {
-    key: 'fintoc',
-    label: 'Fintoc',
+    key: 'suave',
+    label: 'Suave',
     suggestedFont: 'dm-sans',
-    note: 'Inspirada en fintoc.com: DM Sans, azul #057AFF, alto contraste y esquinas poco redondeadas',
+    note: 'Tarjetas con relieve: degradado, luz interior y sombra amplia. DM Sans y azul #057AFF',
   },
   {
     key: 'blueprint',
